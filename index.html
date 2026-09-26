@@ -52,7 +52,7 @@ header{flex:none;display:flex;align-items:center;gap:10px;padding:10px 12px 8px}
 .sq{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;position:relative}
 
 #stage{flex:1 1 0;position:relative;min-height:0;overflow:hidden;touch-action:none}
-canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;border-radius:22px;box-shadow:0 8px 0 rgba(0,0,0,.25),0 20px 40px rgba(0,0,0,.25)}
+#game{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;border-radius:22px;box-shadow:0 8px 0 rgba(0,0,0,.25),0 20px 40px rgba(0,0,0,.25)}
 footer{flex:none;display:flex;justify-content:center;gap:3px;padding:8px 10px 10px}
 .slot{flex:1;max-width:40px;display:flex;flex-direction:column;align-items:center}
 .slot i{font-style:normal;width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:clamp(14px,4.3vw,22px);background:rgba(0,0,0,.22)}
@@ -200,7 +200,20 @@ body.t-night .cloud{background:rgba(180,200,240,.18)}
 .bal{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px;font-weight:800;font-size:20px}
 .items{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .item{background:#F7EBD2;border-radius:16px;padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;border:3px solid transparent}
-.item.eq{border-color:var(--barn)}
+.item{position:relative}.item.eq{border-color:var(--barn)}
+.item.locked .pv{filter:saturate(.35) brightness(.95)}
+.pv canvas{position:absolute;left:0;top:0;display:block}
+#freeEggs{font-size:16px}
+.tag{position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-3deg);z-index:2;font-style:normal;font-size:11px;font-weight:800;white-space:nowrap;border-radius:8px;padding:0 8px 1px;background:var(--barn);color:#fff}
+.tag.ach{background:#6B4FA8}
+.price s{opacity:.55;font-weight:700}
+.price.lock{font-size:13px}
+.tiles .tile{min-width:0}
+.bar.lb{height:7px;margin:5px 6px 3px;background:rgba(255,255,255,.2)}
+.bar.lb i{background:var(--hay)}
+.xpg{font-size:16px;color:#4F7A2F;margin-left:6px}
+.xpline{display:flex;align-items:center;gap:8px;margin-top:4px;font-weight:800;font-size:14px;color:var(--wood-d)}
+.xpline .bar{flex:1;margin:0}
 .pv{width:100%;height:62px;border-radius:12px;overflow:hidden;position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
 .item b{font-size:15px;line-height:1.1}
 .price{width:100%;border-radius:11px;padding:3px 6px 5px;font-weight:800;font-size:15px;background:var(--hay);color:var(--ink);box-shadow:0 3px 0 #B98A1E}
@@ -269,7 +282,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
   <div class="mtop"><div class="greet" id="greet"></div><div class="eggs" id="mEggs">🥚 0</div></div>
   <div class="menu-body">
     <div class="hang"><div class="sign wood nails"><h1>Sapan<br>Çiftliği</h1></div></div>
-    <div class="tiles"><div class="tile"><b id="mBest">0</b><span>rekor</span></div><div class="tile"><b id="mDisc">1/12</b><span>hayvan bulundu</span></div></div>
+    <div class="tiles"><div class="tile"><b id="mLvl">Sv. 1</b><div class="bar lb"><i id="mLvlBar"></i></div></div><div class="tile"><b id="mBest">0</b><span>rekor</span></div><div class="tile"><b id="mDisc">1/12</b><span>hayvan</span></div></div>
     <button class="btn red" id="play">Oyna</button>
     <button class="btn hay" id="dailyBtn">Günün tarlası #<span id="dNo">1</span><small id="dMod"></small></button>
     <div class="icons">
@@ -305,7 +318,8 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <div class="big" id="finalScore">0</div>
     <div class="rec" id="newRec" hidden>Yeni rekor!</div>
     <div class="stats"><div><b id="stBig">🐣</b><span id="stBigN">en büyük</span></div><div><b id="stMerge">0</b><span>birleşme</span></div><div><b id="stShot">0</b><span>atış</span></div></div>
-    <div class="earn">+<span id="earn">0</span> 🥚</div>
+    <div class="earn">+<span id="earn">0</span> 🥚 <span class="xpg">+<span id="xpGain">0</span> XP</span></div>
+    <div class="xpline"><span id="xpLvl">Sv. 1</span><div class="bar"><i id="xpBar"></i></div></div>
     <button class="btn hay small" id="dbl">Reklamla 2 kat yumurta</button>
     <button class="btn red" id="again">Tekrar oyna</button>
     <div class="row"><button class="btn plain" id="share">Paylaş</button><button class="btn plain" id="overMenu">Menü</button></div>
@@ -410,23 +424,36 @@ const TOP=LV.length-1;
 
 /* ---------- cosmetics ---------- */
 const THEMES={
- cayir:{n:'Çayır',price:0,stripe:['#66A84F','#6FB358'],tuft:'rgba(50,100,40,.55)',fl:['#FFF6D6','#FFD84D','#F7B6D2'],hay:'#D9B36B',straw:['#EFCB7E','#B8904C'],arrow:'rgba(120,80,30,.35)',border:'#3F7432',rail:'#B07A45',post:'#7A4B24',rope:'rgba(255,248,231,.6)'},
- sonbahar:{n:'Sonbahar',price:150,stripe:['#A99A46','#B6A64F'],tuft:'rgba(110,80,30,.5)',fl:['#D9582B','#E89A2E','#A23A1C'],leaf:true,hay:'#C98E52',straw:['#E3AE70','#9C6A38'],arrow:'rgba(100,60,20,.35)',border:'#5E4A20',rail:'#A0683A',post:'#6A3F1E',rope:'rgba(255,248,231,.6)',amb:'leaf'},
- kis:{n:'Kış',price:250,stripe:['#E4EDF4','#EDF3F8'],tuft:'rgba(130,160,190,.5)',fl:['#FFFFFF','#CFE2F0'],hay:'#C6DAE9',straw:['#FFFFFF','#A2BCD1'],arrow:'rgba(80,110,140,.35)',border:'#4F6B80',rail:'#8C6A4A',post:'#5E4632',rope:'rgba(60,90,120,.55)',amb:'snow'},
- lavanta:{n:'Lavanta',price:350,stripe:['#8A78BE','#9483C6'],tuft:'rgba(60,45,110,.5)',fl:['#EDE6FF','#C7B5F2','#FFFFFF'],hay:'#D8C08A',straw:['#F0DDA8','#AE9458'],arrow:'rgba(110,80,40,.35)',border:'#433868',rail:'#B07A45',post:'#6B4A2A',rope:'rgba(255,248,231,.6)',amb:'petal'},
+ cayir:{n:'Çayır',price:0,lvl:1,stripe:['#66A84F','#6FB358'],tuft:'rgba(50,100,40,.55)',fl:['#FFF6D6','#FFD84D','#F7B6D2'],hay:'#D9B36B',straw:['#EFCB7E','#B8904C'],arrow:'rgba(120,80,30,.35)',border:'#3F7432',rail:'#B07A45',post:'#7A4B24',rope:'rgba(255,248,231,.6)'},
+ sonbahar:{n:'Sonbahar',price:200,lvl:3,stripe:['#A99A46','#B6A64F'],tuft:'rgba(110,80,30,.5)',fl:['#D9582B','#E89A2E','#A23A1C'],leaf:true,hay:'#C98E52',straw:['#E3AE70','#9C6A38'],arrow:'rgba(100,60,20,.35)',border:'#5E4A20',rail:'#A0683A',post:'#6A3F1E',rope:'rgba(255,248,231,.6)',amb:'leaf'},
+ kis:{n:'Kış',price:320,lvl:6,stripe:['#E4EDF4','#EDF3F8'],tuft:'rgba(130,160,190,.5)',fl:['#FFFFFF','#CFE2F0'],hay:'#C6DAE9',straw:['#FFFFFF','#A2BCD1'],arrow:'rgba(80,110,140,.35)',border:'#4F6B80',rail:'#8C6A4A',post:'#5E4632',rope:'rgba(60,90,120,.55)',amb:'snow'},
+ lavanta:{n:'Lavanta',price:450,lvl:9,stripe:['#8A78BE','#9483C6'],tuft:'rgba(60,45,110,.5)',fl:['#EDE6FF','#C7B5F2','#FFFFFF'],hay:'#D8C08A',straw:['#F0DDA8','#AE9458'],arrow:'rgba(110,80,40,.35)',border:'#433868',rail:'#B07A45',post:'#6B4A2A',rope:'rgba(255,248,231,.6)',amb:'petal'},
  altin:{n:'Altın başak',premium:true,stripe:['#D2AA45','#DCB651'],tuft:'rgba(130,90,20,.5)',fl:['#FFF3B0','#F4D35E','#FFFFFF'],hay:'#B7874A',straw:['#E2B774','#8C6330'],arrow:'rgba(90,60,10,.35)',border:'#6E5418',rail:'#E0B83A',post:'#9C7A1C',rope:'rgba(255,248,231,.7)',amb:'spark'}};
+const RAINBOW=['#FF5E5E','#FFB84D','#FFE45E','#6FE07A','#5EC8FF','#9B7BFF'];
 const SLINGS={
- klasik:{n:'Klasik',price:0,post:'#7A4B24',band:'#5A2E14'},
- ahir:{n:'Ahır kırmızısı',price:80,post:'#B83A30',band:'#6E2019'},
- gece:{n:'Gece mavisi',price:120,post:'#2F4A7A',band:'#172845'},
- gokkusagi:{n:'Gökkuşağı',price:300,post:'#8A5CC7',band:'#8A5CC7',rainbow:true},
- altin:{n:'Altın sapan',premium:true,post:'#E0B83A',band:'#8A6A10'}};
+ klasik:{n:'Klasik',price:0,lvl:1,post:'#7A4B24',band:'#5A2E14'},
+ ahir:{n:'Ahır kırmızısı',price:120,lvl:2,post:'#B83A30',band:'#6E2019'},
+ gece:{n:'Gece mavisi',price:180,lvl:4,post:'#2F4A7A',band:'#172845'},
+ bambu:{n:'Bambu',price:250,lvl:6,post:'#7BA23F',band:'#3E5E1C',ring:'#C7E08A'},
+ halat:{n:'Denizci halatı',price:320,lvl:8,post:'#2F4A7A',band:'#E8D9B0',band2:'#A8874F',ring:'#E8D9B0'},
+ seker:{n:'Şeker kamışı',price:400,lvl:10,post:'#FFFFFF',band:'#E23B4E',band2:'#FFFFFF',ring:'#E23B4E'},
+ gokkusagi:{n:'Gökkuşağı',price:500,lvl:12,post:'#8A5CC7',grad:RAINBOW,ring:'#FFE45E'},
+ ates:{n:'Ateş',price:600,lvl:15,post:'#3A1A10',grad:['#FF3B1F','#FF9A1F','#FFE14D','#FF9A1F','#FF3B1F'],ring:'#FF7A1F',glow:'rgba(255,140,40,.35)'},
+ okyanus:{n:'Okyanus',ach:'whale',post:'#1F6F8B',grad:['#1FA2C8','#7FE0F5','#1FA2C8'],ring:'#BFF3FF'},
+ altin:{n:'Altın sapan',premium:true,post:'#E0B83A',band:'#8A6A10',ring:'#FFF3B0',glow:'rgba(255,220,100,.3)'}};
 const TRAILS={
- yok:{n:'İz yok',price:0,cols:[]},
- yildiz:{n:'Yıldız tozu',price:120,cols:['#FFF3A6','#FFE45E','#FFFFFF']},
- kalp:{n:'Kalpler',price:200,cols:['#FF6B8B','#FF9EB5','#E8436A'],heart:true},
- konfeti:{n:'Konfeti',price:220,cols:['#FF5E5E','#FFB84D','#6FE07A','#5EC8FF','#9B7BFF']},
- altin:{n:'Altın iz',premium:true,cols:['#F4D35E','#E0B83A','#FFF3B0']}};
+ yok:{n:'İz yok',price:0,lvl:1,k:null},
+ toz:{n:'Toz bulutu',price:80,lvl:2,k:'dust',rate:28,cols:['#EADBB8','#D2BC8E','#F6ECD4']},
+ yildiz:{n:'Yıldız tozu',price:150,lvl:3,k:'star',rate:34,cols:['#FFFFFF','#CFE8FF','#E6F3FF']},
+ kalp:{n:'Kalpler',price:220,lvl:5,k:'heart',rate:26,cols:['#FF6B8B','#FF9EB5','#E8436A']},
+ baloncuk:{n:'Sabun köpüğü',price:280,lvl:7,k:'bubble',rate:22,cols:['#9FE3FF','#F7B6F2','#B8FFD0']},
+ nota:{n:'Müzik notaları',price:340,lvl:9,k:'note',rate:12,cols:['#FFF6E0','#FFE45E']},
+ konfeti:{n:'Konfeti',price:400,lvl:11,k:'confetti',rate:40,cols:RAINBOW},
+ cicek:{n:'Çiçek yaprakları',price:480,lvl:13,k:'petal',rate:26,cols:['#FFC2D6','#FF9EBB','#FFFFFF']},
+ gokkusagi:{n:'Gökkuşağı şeridi',price:650,lvl:16,k:'ribbon',ribbon:'rainbow'},
+ simsek:{n:'Şimşek',ach:'combo5',k:'bolt',rate:18,cols:['#FFF26B','#FFFFFF']},
+ kuyruklu:{n:'Kuyruklu yıldız',ach:'legend',k:'ribbon',ribbon:'#CFEAFF',plus:'star',rate:20,cols:['#FFFFFF','#CFE8FF']},
+ altin:{n:'Altın iz',premium:true,k:'ribbon',ribbon:'gold',plus:'coin',rate:18,cols:['#F4D35E','#E0B83A','#FFF3B0']}};
 const SHOP={theme:THEMES,sling:SLINGS,trail:TRAILS};
 
 /* ---------- quests, achievements, daily ---------- */
@@ -485,12 +512,20 @@ const TODAY_MOD=MODS[seedOf('m'+TODAY)%MODS.length];
 /* ---------- profile ---------- */
 const DEF={eggs:0,own:{theme:['cayir'],sling:['klasik'],trail:['yok']},eq:{theme:'cayir',sling:'klasik',trail:'yok'},
  streak:{last:'',day:0},quests:null,ach:{},stats:{games:0,merges:0,maxCombo:0,madeMax:0,legends:0,bestScore:0,streakMax:0,book:1,bought:0},
- premium:false,freeAt:0,daily:{date:'',best:0,bestLv:0},tips:{}};
+ premium:false,freeAt:0,daily:{date:'',best:0,bestLv:0},tips:{},xp:0,adDay:{date:'',free:0,dbl:0}};
 let P;try{P=JSON.parse(store.get('p','null'))}catch(e){P=null}
 P=Object.assign(JSON.parse(JSON.stringify(DEF)),P||{});
-for(const k of ['own','eq','stats','streak','daily','tips'])P[k]=Object.assign(JSON.parse(JSON.stringify(DEF[k])),P[k]||{});
+for(const k of ['own','eq','stats','streak','daily','tips','adDay'])P[k]=Object.assign(JSON.parse(JSON.stringify(DEF[k])),P[k]||{});
 const save=()=>store.set('p',JSON.stringify(P));
 let TH=THEMES[P.eq.theme]||THEMES.cayir,SK=SLINGS[P.eq.sling]||SLINGS.klasik,TR=TRAILS[P.eq.trail]||TRAILS.yok;
+/* level: only playing raises it (ads and eggs cannot) */
+const MAXL=30,xpAt=L=>Math.round(60*Math.pow(L-1,1.6));
+const lvlOf=xp=>{let L=1;while(L<MAXL&&xp>=xpAt(L+1))L++;return L};
+const AD_CAP={free:3,dbl:3};
+function adDay(){if(P.adDay.date!==TODAY)P.adDay={date:TODAY,free:0,dbl:0};return P.adDay}
+const dealOf=()=>{const pool=[];for(const k in SHOP)for(const id in SHOP[k]){const it=SHOP[k][id];if(it.price>0)pool.push([k,id])}
+  return pool[seedOf('deal'+TODAY)%pool.length]};
+const DEAL=dealOf();const priceOf=(k,id)=>{const it=SHOP[k][id];return DEAL[0]===k&&DEAL[1]===id?Math.round(it.price*.6/5)*5:it.price};
 
 /* ---------- time of day ---------- */
 const qs=new URLSearchParams(location.search);
@@ -608,7 +643,8 @@ function addEggs(n,why){if(n<=0)return;P.eggs+=n;save();refreshEggs(true);sfx.co
 function refreshEggs(pop){for(const id of ['mEggs']){const e=$(id);e.textContent='🥚 '+fmt(P.eggs);if(pop){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}}
   const s=$('sEggs');if(s)s.textContent=fmt(P.eggs)}
 function stat(){return Object.assign({},P.stats,{book:disc.size+(uniSeen?1:0)})}
-function checkAch(){const s=stat();for(const a of ACH){if(!P.ach[a.id]&&a.ok(s)){P.ach[a.id]=1;save();addEggs(a.r,`Başarım: ${a.i} ${a.t}`)}}}
+function checkAch(){const s=stat();for(const a of ACH){if(!P.ach[a.id]&&a.ok(s)){P.ach[a.id]=1;save();addEggs(a.r,`Başarım: ${a.i} ${a.t}`);
+  for(const k in SHOP)for(const id in SHOP[k])if(SHOP[k][id].ach===a.id){P.own[k].includes(id)||P.own[k].push(id);save();toast(`Özel ödül açıldı: ${SHOP[k][id].n}! Pazarda seni bekliyor.`)}}}}
 function ensureQuests(){if(P.quests&&P.quests.date===TODAY)return;const r=mulberry(seedOf('q'+TODAY)),pool=[...QPOOL],list=[];
   while(list.length<3){const i=Math.floor(r()*pool.length);list.push({id:pool[i].id,prog:0,done:false,cl:false});pool.splice(i,1)}
   P.quests={date:TODAY,list,bonus:false};save()}
@@ -686,6 +722,7 @@ function startGame(m){ensureAudio();sfx.click();setMode(m||'normal');reset();sta
 function toMenu(){state='menu';setMode('normal');document.body.classList.add('chrome-off');bodies=[];parts=[];floats=[];cur=null;demoT=.4;
   ['over','pause','book','second','shop','quests'].forEach(i=>show(i,false));show('menu',true);refreshMenu();placeTut()}
 function refreshMenu(){$('greet').textContent=TODINFO.greet;$('mBest').textContent=fmt(best);
+  {const L=lvlOf(P.xp),a=xpAt(L),b=xpAt(L+1);$('mLvl').textContent='Sv. '+L;$('mLvlBar').style.width=(L>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
   $('mDisc').textContent=(disc.size+(uniSeen?1:0))+'/12';$('dNo').textContent=DAYNO;
   $('dMod').textContent=P.daily.date===TODAY?`${TODAY_MOD.n}. Bugünkü en iyin: ${fmt(P.daily.best)}`:`Bugün: ${TODAY_MOD.n}. Herkes aynı tarlada!`;
   refreshEggs();badge()}
@@ -716,16 +753,28 @@ function finish(){
   qev('game');qev('score',score);
   if(mode==='daily'){qev('daily');if(P.daily.date!==TODAY)P.daily={date:TODAY,best:0,bestLv:0};
     if(score>P.daily.best){P.daily.best=score;P.daily.bestLv=maxLv}}
-  let earn=Math.max(1,Math.floor(score/100));if(mode==='daily')earn*=2;if(P.premium)earn=Math.ceil(earn*1.5);
-  lastEarn=earn;P.eggs+=earn;save();checkAch();maybeInterstitial();
+  // eggs grow with the square root of score, so marathon games don't flood the economy
+  let earn=Math.max(1,Math.round(2.2*Math.sqrt(score/100)));if(mode==='daily')earn*=2;if(P.premium)earn=Math.ceil(earn*1.5);
+  lastEarn=earn;P.eggs+=earn;
+  const xpG=Math.round((merges+Math.floor(score/150))*(mode==='daily'?1.5:1)),L0=lvlOf(P.xp);P.xp+=xpG;const L1=lvlOf(P.xp);
+  save();checkAch();maybeInterstitial();
+  $('xpGain').textContent=xpG;
+  {const a=xpAt(L1),b=xpAt(L1+1);$('xpLvl').textContent='Sv. '+L1;$('xpBar').style.width=(L1>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
+  if(L1>L0)setTimeout(()=>levelUp(L0,L1),900);
   $('overTitle').textContent=mode==='daily'?`Günün tarlası #${DAYNO}`:'Ahır doldu!';
   $('newRec').hidden=!rec;$('stBig').textContent=LV[maxLv].e;$('stBigN').textContent=LV[maxLv].n.toLowerCase();
   $('stMerge').textContent=merges;$('stShot').textContent=launched;$('finalScore').textContent='0';$('earn').textContent=earn;
-  $('dbl').hidden=false;$('dbl').textContent=P.premium?'Yumurtaları 2 katla 👑':'Reklamla 2 kat yumurta';
+  $('dbl').hidden=adDay().dbl>=AD_CAP.dbl||lastEarn<2;$('dbl').textContent=P.premium?'Yumurtaları 2 katla 👑':'Reklamla 2 kat yumurta';
   $('share').textContent='Paylaş';
   updHud();show('over',true);countUp($('finalScore'),score);if(earn)sfx.coin();
 }
-$('dbl').onclick=()=>rewarded('iki-kat',()=>{P.eggs+=lastEarn;save();$('earn').textContent=lastEarn*2;$('dbl').hidden=true;sfx.coin();toast(`+${lastEarn} 🥚 daha!`)});
+$('dbl').onclick=()=>rewarded('iki-kat',()=>{adDay().dbl++;P.eggs+=lastEarn;save();$('earn').textContent=lastEarn*2;$('dbl').hidden=true;sfx.coin();toast(`+${lastEarn} 🥚 daha!`)});
+function levelUp(a,b){
+  let gift=0;for(let L=a+1;L<=b;L++)gift+=20+L*5;
+  const opened=[];for(const k in SHOP)for(const id in SHOP[k]){const it=SHOP[k][id];if(it.lvl>a&&it.lvl<=b)opened.push(it.n)}
+  sfx.legend();vib([20,30,20]);addEggs(gift,`Seviye ${b}!`);
+  if(opened.length)toast(`Pazarda yeni: ${opened.join(', ')}`);
+}
 function countUp(el,to){const t0=performance.now(),d=Math.min(1400,400+to/4);
   const step=n=>{const k=Math.min(1,(n-t0)/d),e=1-Math.pow(1-k,3);el.textContent=fmt(to*e);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
 function gain(v,x,y,label){
@@ -773,7 +822,7 @@ function upgrade(o,u){
 }
 function launch(){
   const sp=pull.power*maxSpeed,b=mk(cur.lv,SL.x,SL.y,cur.uni);
-  b.vx=pull.ux*sp;b.vy=pull.uy*sp;b.pop=1;b.trail=TR.cols.length>0;pending.push(b);launched++;qev('shot');
+  b.vx=pull.ux*sp;b.vy=pull.uy*sp;b.pop=1;b.trail=!!TR.k;pending.push(b);launched++;qev('shot');
   sfx.launch(pull.power);vib(8);
   if(cur.uni&&!uniSeen){uniSeen=true;store.set('uni','1');toast('🦄 Tek boynuz dokunduğu hayvanı bir üst seviyeye taşır!');checkAch()}
   if(!tutDone){tutDone=true;store.set('tut','1');placeTut()}
@@ -825,7 +874,7 @@ function demo(dt){
   demoT-=dt;if(demoT>0)return;demoT=1.3+Math.random()*1.1;
   if(bodies.length>13||bodies.some(b=>b.lv>=6)){for(const b of bodies)burst(b.x,b.y,[LV[b.lv].c,'#FFF8E7'],8,160);bodies=[];demoT=.8;return}
   const a=(Math.random()-.5)*1.9,sp=650+Math.random()*700,b=mk(Math.floor(Math.random()*3),SL.x,SL.y);
-  b.vx=Math.sin(a)*sp;b.vy=-Math.cos(a)*sp;b.pop=.3;b.trail=TR.cols.length>0;pending.push(b);
+  b.vx=Math.sin(a)*sp;b.vy=-Math.cos(a)*sp;b.pop=.3;b.trail=!!TR.k;pending.push(b);
 }
 function update(dt){
   time+=dt;shake=Math.max(0,shake-dt*1.6);
@@ -836,16 +885,14 @@ function update(dt){
     if(state==='play'&&!cur){loadT-=dt;if(loadT<=0){cur=next;next=pick();if(!cur.uni)discover(cur.lv);updHud(true)}}
     dangerMax=0;
     for(const b of bodies){b.age+=dt;
-      if(b.trail){const sp=Math.hypot(b.vx,b.vy);if(sp>160&&Math.random()<.9){const c=TR.cols[Math.floor(Math.random()*TR.cols.length)];
-        parts.push({x:b.x+(Math.random()-.5)*b.r,y:b.y+(Math.random()-.5)*b.r,vx:(Math.random()-.5)*30,vy:(Math.random()-.5)*30,life:0,max:.45,c,s:TR.heart?4:2+Math.random()*2.5,h:TR.heart})}
-        else if(sp<60)b.trail=false}
+      if(b.trail)trailTick(b,dt);
       if(state!=='play')continue;
       const slow=Math.hypot(b.vx,b.vy)<70;
       if(b.age>1.1&&slow&&b.y+b.r*.45>DANGER_Y)b.danger+=dt;else b.danger=Math.max(0,b.danger-dt*2);
       if(b.danger>dangerMax)dangerMax=b.danger}
     if(state==='play'&&dangerMax>DANGER_T)endRun();
     for(const b of bodies){b.pop=Math.min(1,b.pop+dt*4);b.sq*=Math.exp(-9*dt)}
-    for(const p of parts){p.life+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.93;p.vy*=.93}
+    for(const p of parts){p.life+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.93;p.vy*=.93;if(p.vr)p.rot+=p.vr*dt;if(p.grow)p.s+=p.grow*dt}
     parts=parts.filter(p=>p.life<p.max);
     for(const f of floats)f.t+=dt;floats=floats.filter(f=>f.t<(f.huge?1.4:1.1));
   }
@@ -858,7 +905,53 @@ function update(dt){
 
 /* ---------- drawing ---------- */
 const easeBack=t=>{const c=1.9;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)};
-function heart(x,y,s){ctx.beginPath();ctx.moveTo(x,y+s*.9);ctx.bezierCurveTo(x-s*1.4,y-s*.1,x-s*.6,y-s*1.1,x,y-s*.35);ctx.bezierCurveTo(x+s*.6,y-s*1.1,x+s*1.4,y-s*.1,x,y+s*.9);ctx.fill()}
+const sizeOf=k=>({dust:8,star:7,heart:6,bubble:7,note:17,confetti:4.2,petal:6,bolt:12,coin:5}[k]||3);
+function trailTick(b,dt){
+  const sp=Math.hypot(b.vx,b.vy);
+  if(TR.k==='ribbon'){const h=b.hist||(b.hist=[]);if(sp>60)h.push({x:b.x,y:b.y,t:time});while(h.length&&time-h[0].t>.35)h.shift()}
+  if(sp<60){if(!b.hist||!b.hist.length)b.trail=false;return}
+  const kind=TR.k==='ribbon'?TR.plus:TR.k;if(!kind||sp<140)return;
+  b.tacc=(b.tacc||0)+dt*(TR.rate||30)*1.3;
+  while(b.tacc>=1){b.tacc--;spawnTrail(kind,b)}
+}
+function spawnTrail(k,b){
+  const Rn=Math.random,c=TR.cols[Rn()*TR.cols.length|0];
+  const p={x:b.x+(Rn()-.5)*b.r*.9,y:b.y+(Rn()-.5)*b.r*.9,vx:(Rn()-.5)*30-b.vx*.04,vy:(Rn()-.5)*30-b.vy*.04,life:0,max:.65,c,k,s:sizeOf(k)*(.7+Rn()*.6),rot:Rn()*6,vr:0};
+  if(k==='dust'){p.max=.6;p.grow=12}
+  else if(k==='star'){p.max=.55;p.vr=4}
+  else if(k==='heart')p.vy-=25;
+  else if(k==='bubble'){p.vy=-30-Rn()*25;p.max=.8}
+  else if(k==='note'){p.vy=-35;p.max=.75;p.g=Rn()<.5?'♪':'♫'}
+  else if(k==='confetti'){p.max=.7;p.vr=(Rn()-.5)*18}
+  else if(k==='petal'){p.max=.8;p.vr=(Rn()-.5)*6}
+  else if(k==='bolt'){p.max=.2;p.vx=p.vy=0}
+  else if(k==='coin'){p.max=.6;p.vr=6}
+  parts.push(p)}
+function star4(g,x,y,s,rot){g.save();g.translate(x,y);g.rotate(rot||0);g.beginPath();
+  for(let i=0;i<8;i++){const r=i%2?s*.32:s,a=i*Math.PI/4;g.lineTo(Math.cos(a)*r,Math.sin(a)*r)}g.closePath();g.fill();g.restore()}
+function heartG(g,x,y,s){g.beginPath();g.moveTo(x,y+s*.9);g.bezierCurveTo(x-s*1.4,y-s*.1,x-s*.6,y-s*1.1,x,y-s*.35);g.bezierCurveTo(x+s*.6,y-s*1.1,x+s*1.4,y-s*.1,x,y+s*.9);g.fill()}
+function shape(g,k,x,y,s,c,rot,gl){
+  g.fillStyle=c;g.strokeStyle=c;
+  switch(k){
+    case 'dust':{const a=g.globalAlpha;g.globalAlpha=a*.5;g.beginPath();g.arc(x,y,s,0,7);g.fill();g.globalAlpha=a;break}
+    case 'star':star4(g,x,y,s,rot);break;
+    case 'heart':heartG(g,x,y,s);break;
+    case 'bubble':g.lineWidth=1.5;g.beginPath();g.arc(x,y,s,0,7);g.stroke();g.fillStyle='rgba(255,255,255,.85)';g.beginPath();g.arc(x-s*.38,y-s*.38,s*.26,0,7);g.fill();break;
+    case 'note':g.font=`800 ${s}px "Baloo 2",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.lineWidth=3;g.strokeStyle='rgba(43,33,24,.55)';g.strokeText(gl||'♪',x,y);g.fillText(gl||'♪',x,y);break;
+    case 'confetti':g.save();g.translate(x,y);g.rotate(rot);g.fillRect(-s,-s*.45,s*2,s*.9);g.restore();break;
+    case 'petal':g.save();g.translate(x,y);g.rotate(rot);g.beginPath();g.ellipse(0,0,s,s*.5,0,0,7);g.fill();g.restore();break;
+    case 'bolt':g.lineWidth=2.4;g.lineJoin='round';g.lineCap='round';g.save();g.translate(x,y);g.rotate(rot);g.beginPath();g.moveTo(-s*.3,-s);g.lineTo(s*.25,-s*.1);g.lineTo(-s*.25,s*.1);g.lineTo(s*.3,s);g.stroke();g.restore();break;
+    case 'coin':{const w=Math.abs(Math.cos(rot))*s+.6;g.beginPath();g.ellipse(x,y,w,s,0,0,7);g.fill();g.strokeStyle='#A07A10';g.lineWidth=1;g.stroke();break}
+    default:g.beginPath();g.arc(x,y,s,0,7);g.fill()}
+}
+function drawRibbon(g,it,pts,wid,t){
+  if(pts.length<2)return;g.lineCap='round';g.lineJoin='round';
+  for(let pass=0;pass<2;pass++)for(let i=1;i<pts.length;i++){const a=pts[i].a,p0=pts[i-1],p1=pts[i];
+    g.globalAlpha=(pass?.95:.3)*a;g.lineWidth=(pass?wid*.45:wid)*(.3+.7*a);
+    g.strokeStyle=it.ribbon==='rainbow'?`hsl(${(i*28+t*220)%360},90%,62%)`:it.ribbon==='gold'?(pass?'#FFF1A8':'#E0B83A'):it.ribbon;
+    g.beginPath();g.moveTo(p0.x,p0.y);g.lineTo(p1.x,p1.y);g.stroke()}
+  g.globalAlpha=1}
+function heart(x,y,s){heartG(ctx,x,y,s)}
 function drawBody(b){
   const t=b.uni?uniTok:tokens[b.lv];
   ctx.fillStyle='rgba(25,45,12,.25)';ctx.beginPath();ctx.ellipse(b.x+b.r*.1,b.y+b.r*.24,b.r*.95,b.r*.78,0,0,7);ctx.fill();
@@ -872,12 +965,18 @@ function drawBody(b){
     ctx.beginPath();ctx.arc(0,0,b.r+5,-Math.PI/2,-Math.PI/2+k*Math.PI*2);ctx.stroke()}
   ctx.restore();
 }
-function bandStyle(L,R){if(!SK.rainbow)return SK.band;const g=ctx.createLinearGradient(L.x,0,R.x,0);
-  ['#FF5E5E','#FFB84D','#FFE45E','#6FE07A','#5EC8FF','#9B7BFF'].forEach((c,i)=>g.addColorStop(i/5,c));return g}
-function drawPosts(r){const L={x:SL.x-r-14,y:SL.y+4},R={x:SL.x+r+14,y:SL.y+4};
-  for(const q of [L,R]){ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.arc(q.x+2,q.y+4,8,0,7);ctx.fill();
-    ctx.fillStyle=SK.post;ctx.beginPath();ctx.arc(q.x,q.y,8,0,7);ctx.fill();ctx.strokeStyle='rgba(30,15,5,.85)';ctx.lineWidth=2.5;ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.arc(q.x-2.5,q.y-2.5,2.5,0,7);ctx.fill()}}
+function slingBand(g,sk,L,R,path){
+  let st=sk.band;if(sk.grad){st=g.createLinearGradient(L.x,0,R.x,0);sk.grad.forEach((c,i)=>st.addColorStop(i/(sk.grad.length-1),c))}
+  if(sk.glow){path();g.strokeStyle=sk.glow;g.lineWidth=12;g.stroke()}
+  path();g.strokeStyle=st;g.lineWidth=6;g.stroke();
+  if(sk.band2){path();g.setLineDash([5,6]);g.strokeStyle=sk.band2;g.lineWidth=6;g.stroke();g.setLineDash([])}
+}
+function slingPost(g,sk,x,y){
+  g.fillStyle='rgba(0,0,0,.2)';g.beginPath();g.arc(x+2,y+4,8,0,7);g.fill();
+  g.fillStyle=sk.post;g.beginPath();g.arc(x,y,8,0,7);g.fill();g.strokeStyle='rgba(30,15,5,.85)';g.lineWidth=2.5;g.stroke();
+  if(sk.ring){g.strokeStyle=sk.ring;g.lineWidth=2;g.beginPath();g.arc(x,y,4.2,0,7);g.stroke()}
+  g.fillStyle='rgba(255,255,255,.35)';g.beginPath();g.arc(x-2.5,y-2.5,2.3,0,7);g.fill()}
+function drawPosts(r){const L={x:SL.x-r-14,y:SL.y+4},R={x:SL.x+r+14,y:SL.y+4};slingPost(ctx,SK,L.x,L.y);slingPost(ctx,SK,R.x,R.y)}
 function drawAim(){
   const l=cur.uni?UNI:LV[cur.lv],p=pull&&pull.power>0?pull:{power:0,ux:0,uy:-1};
   const px=SL.x-p.ux*p.power*52,py=SL.y-p.uy*p.power*52;
@@ -891,10 +990,10 @@ function drawAim(){
       if(i%4===0){ctx.fillStyle=`rgba(255,248,231,${Math.max(.12,.95-i/280)})`;ctx.beginPath();ctx.arc(x,y,Math.max(1.8,3.6-i/120),0,7);ctx.fill()}}
     ctx.setLineDash([6,6]);ctx.strokeStyle='rgba(255,248,231,.75)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,l.r,0,7);ctx.stroke();ctx.setLineDash([]);
   }
-  ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=bandStyle(L,R);ctx.lineWidth=6;
+  ctx.lineCap='round';ctx.lineJoin='round';
   const nx=-p.uy,ny=p.ux;
-  ctx.beginPath();ctx.moveTo(L.x,L.y);ctx.lineTo(px-nx*l.r*.8-p.ux*l.r*.45,py-ny*l.r*.8-p.uy*l.r*.45);
-  ctx.lineTo(px+nx*l.r*.8-p.ux*l.r*.45,py+ny*l.r*.8-p.uy*l.r*.45);ctx.lineTo(R.x,R.y);ctx.stroke();
+  slingBand(ctx,SK,L,R,()=>{ctx.beginPath();ctx.moveTo(L.x,L.y);ctx.lineTo(px-nx*l.r*.8-p.ux*l.r*.45,py-ny*l.r*.8-p.uy*l.r*.45);
+  ctx.lineTo(px+nx*l.r*.8-p.ux*l.r*.45,py+ny*l.r*.8-p.uy*l.r*.45);ctx.lineTo(R.x,R.y)});
   ctx.fillStyle='rgba(30,20,5,.22)';ctx.beginPath();ctx.ellipse(px,py+l.r*.2,l.r*.95,l.r*.8,0,0,7);ctx.fill();
   const t=cur.uni?uniTok:tokens[cur.lv];
   ctx.drawImage(t.c,px-t.half,py-t.half,t.half*2,t.half*2);
@@ -926,13 +1025,14 @@ function draw(){
   ctx.beginPath();ctx.moveTo(F,DANGER_Y);ctx.lineTo(W-F,DANGER_Y);ctx.stroke();ctx.setLineDash([]);
   if(warn){ctx.font='800 17px "Baloo 2",sans-serif';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='rgba(255,246,224,.9)';
     const s='Samanlıktan çıkar! '+Math.max(0,DANGER_T-dangerMax).toFixed(1);ctx.strokeText(s,W/2,DANGER_Y-10);ctx.fillStyle='#D12F22';ctx.fillText(s,W/2,DANGER_Y-10)}
+  if(TR.k==='ribbon')for(const b of bodies)if(b.hist&&b.hist.length>1)drawRibbon(ctx,TR,b.hist.map(p=>({x:p.x,y:p.y,a:Math.max(0,1-(time-p.t)/.35)})),b.r*.9,time);
   for(const b of bodies)drawBody(b);
   if((state==='play'||state==='paused'||state==='over')&&cur)drawAim();else drawPosts(20);
   drawAmb();
   if(windX&&Math.abs(windX)>15){const dir=Math.sign(windX),a=Math.min(1,Math.abs(windX)/120);ctx.globalAlpha=.35+.5*a;ctx.strokeStyle='#FFF6E0';ctx.lineWidth=3;ctx.lineCap='round';
     for(let i=0;i<3;i++){const y=F+26+i*9,x0=W/2-28*dir,x1=W/2+(18+i*6)*dir*a;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke()}
     ctx.beginPath();ctx.moveTo(W/2+30*dir*a,F+35);ctx.lineTo(W/2+(30*a-8)*dir,F+28);ctx.moveTo(W/2+30*dir*a,F+35);ctx.lineTo(W/2+(30*a-8)*dir,F+42);ctx.stroke();ctx.globalAlpha=1}
-  for(const p of parts){ctx.globalAlpha=1-p.life/p.max;ctx.fillStyle=p.c;if(p.h)heart(p.x,p.y,p.s);else{ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,7);ctx.fill()}}
+  for(const p of parts){ctx.globalAlpha=1-p.life/p.max;shape(ctx,p.k,p.x,p.y,p.s,p.c,p.rot,p.g)}
   ctx.globalAlpha=1;ctx.textAlign='center';
   for(const f of floats){const dur=f.huge?1.4:1.1,a=Math.min(1,(1-f.t/dur)*2);ctx.globalAlpha=a;
     const sz=f.huge?34*(1+.4*Math.max(0,.15-f.t)/.15):(f.big?24:19);
@@ -980,17 +1080,42 @@ document.querySelectorAll('#bookTabs button').forEach(b=>b.onclick=()=>{bookTab=
 let shopTab='theme';
 function pvHTML(kind,id,it){
   if(kind==='theme')return `<div class="pv" style="background:repeating-linear-gradient(180deg,${it.stripe[0]} 0 12px,${it.stripe[1]} 12px 24px)"><div style="position:absolute;left:0;right:0;bottom:0;height:16px;background:${it.hay};border-top:2px dashed rgba(255,255,255,.6)"></div><div style="position:absolute;inset:0;border:5px solid ${it.rail};border-radius:12px"></div></div>`;
-  if(kind==='sling'){const band=it.rainbow?'url(#rb)':it.band;
-    return `<div class="pv" style="background:#E9D3A4"><svg width="90" height="50" viewBox="0 0 90 50"><defs><linearGradient id="rb"><stop offset="0" stop-color="#FF5E5E"/><stop offset=".25" stop-color="#FFB84D"/><stop offset=".5" stop-color="#6FE07A"/><stop offset=".75" stop-color="#5EC8FF"/><stop offset="1" stop-color="#9B7BFF"/></linearGradient></defs><path d="M14 22 Q45 50 76 22" fill="none" stroke="${band}" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="30" r="12" fill="#FFE27A" stroke="#8A5A20" stroke-width="2"/><circle cx="14" cy="22" r="8" fill="${it.post}" stroke="#2B1A0A" stroke-width="2.5"/><circle cx="76" cy="22" r="8" fill="${it.post}" stroke="#2B1A0A" stroke-width="2.5"/></svg></div>`}
-  if(kind==='trail'){const dots=it.cols.length?[0,1,2,3,4,5].map(i=>`<span style="position:absolute;left:${12+i*11}px;top:${32-i*3}px;${it.heart?`font-size:${9+i}px;color:${it.cols[i%it.cols.length]}">❤`:`width:${5+i}px;height:${5+i}px;border-radius:50%;background:${it.cols[i%it.cols.length]};opacity:${.3+i*.12}">`}</span>`).join(''):'<span style="font-weight:800;color:#8A6D45">—</span>';
-    return `<div class="pv" style="background:#5E9E48">${dots}<span style="position:absolute;right:10px;top:14px;width:30px;height:30px;border-radius:50%;background:#FFE27A;border:2px solid #8A5A20"></span></div>`}
+  return `<div class="pv" style="background:${kind==='sling'?'#E9D3A4':'#5E9E48'}"><canvas data-pv="${kind}:${id}"></canvas></div>`;
 }
+function drawPreviews(){
+  document.querySelectorAll('canvas[data-pv]').forEach(c=>{
+    const [kind,id]=c.dataset.pv.split(':'),it=SHOP[kind][id],r=c.parentNode.getBoundingClientRect(),d=Math.min(3,devicePixelRatio||1);
+    const w=r.width||140,h=r.height||62;c.width=w*d;c.height=h*d;c.style.width=w+'px';c.style.height=h+'px';
+    const g=c.getContext('2d');g.scale(d,d);
+    if(kind==='sling'){const L={x:w/2-34,y:h/2-6},Rr={x:w/2+34,y:h/2-6},px=w/2,py=h/2+10;
+      g.lineCap='round';g.lineJoin='round';slingBand(g,it,L,Rr,()=>{g.beginPath();g.moveTo(L.x,L.y);g.quadraticCurveTo(px,py+26,Rr.x,Rr.y)});
+      g.fillStyle='#FFE27A';g.strokeStyle='#8A5A20';g.lineWidth=2;g.beginPath();g.arc(px,py,12,0,7);g.fill();g.stroke();
+      slingPost(g,it,L.x,L.y);slingPost(g,it,Rr.x,Rr.y);return}
+    // trail preview: fake path toward an animal on the right
+    const ax=w-26,ay=h/2,pts=[];for(let i=0;i<=22;i++){const t=i/22;pts.push({x:8+t*(ax-26),y:h*.78-(h*.78-ay)*Math.sin(t*Math.PI/2)})}
+    if(it.k==='ribbon')drawRibbon(g,it,pts.map((p,i)=>({x:p.x,y:p.y,a:i/pts.length})),9,time);
+    const kk=it.k==='ribbon'?it.plus:it.k;
+    if(kk){let s=11;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;
+      for(let i=2;i<pts.length;i+=it.k==='note'?5:2){const p=pts[i],a=i/pts.length;g.globalAlpha=.35+.65*a;
+        shape(g,kk,p.x+(rnd()-.5)*8,p.y+(rnd()-.5)*8,sizeOf(kk)*(.45+.45*a),it.cols[i%it.cols.length],rnd()*6,rnd()<.5?'♪':'♫')}
+      g.globalAlpha=1}
+    if(!it.k){g.fillStyle='rgba(255,255,255,.55)';g.font='800 14px "Baloo 2",sans-serif';g.textAlign='center';g.fillText('sade atış',(w-40)/2,h/2+5)}
+    g.fillStyle='#FFE27A';g.strokeStyle='#8A5A20';g.lineWidth=2;g.beginPath();g.arc(ax,ay,14,0,7);g.fill();g.stroke();
+  });
+}
+function lockOf(kind,id){const it=SHOP[kind][id];
+  if(P.own[kind].includes(id))return null;
+  if(it.premium)return 'prem';
+  if(it.ach)return P.ach[it.ach]?null:'ach';
+  if(lvlOf(P.xp)<it.lvl)return 'lvl';
+  return null}
 function renderShop(){
   document.querySelectorAll('#shopTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===shopTab));
   refreshEggs();
-  const fe=$('freeEggs'),wait=P.freeAt-Date.now();
-  if(wait>0){const m=Math.ceil(wait/60000);fe.textContent=`Sonraki bedava yumurta: ${m>=60?Math.floor(m/60)+' sa '+(m%60)+' dk':m+' dk'}`;fe.disabled=true;fe.style.opacity=.6}
-  else{fe.textContent=P.premium?'Bedava +25 🥚 👑':'Reklamla bedava +25 🥚';fe.disabled=false;fe.style.opacity=1}
+  const fe=$('freeEggs'),wait=P.freeAt-Date.now(),ad=adDay();
+  if(ad.free>=AD_CAP.free){fe.textContent='Bugünkü bedava yumurtalar alındı. Yarın yine gel!';fe.disabled=true;fe.style.opacity=.6}
+  else if(wait>0){const m=Math.ceil(wait/60000);fe.textContent=`Sonraki bedava yumurta: ${m>=60?Math.floor(m/60)+' sa '+(m%60)+' dk':m+' dk'}`;fe.disabled=true;fe.style.opacity=.6}
+  else{fe.textContent=(P.premium?'Bedava +25 🥚 👑':'Reklamla +25 🥚')+`, bugün ${AD_CAP.free-ad.free} hak`;fe.disabled=false;fe.style.opacity=1}
   const box=$('items');
   if(shopTab==='prem'){
     box.className='';
@@ -1009,17 +1134,27 @@ function renderShop(){
   const set=SHOP[shopTab];
   box.innerHTML=Object.entries(set).map(([id,it])=>{
     const own=P.own[shopTab].includes(id),eq=P.eq[shopTab]===id;
+    const lk=lockOf(shopTab,id),deal=DEAL[0]===shopTab&&DEAL[1]===id&&!own,pr=priceOf(shopTab,id);
+    const ach=it.ach&&ACH.find(a=>a.id===it.ach);
     const btn=eq?'<button class="price eqd">Kullanılıyor</button>':own?`<button class="price own" data-buy="${id}">Kullan</button>`:
-      it.premium?`<button class="price lock" data-buy="${id}">👑 Sahip</button>`:`<button class="price" data-buy="${id}">${it.price} 🥚</button>`;
-    return `<div class="item${eq?' eq':''}">${pvHTML(shopTab,id,it)}<b>${it.n}</b>${btn}</div>`}).join('');
+      lk==='prem'?`<button class="price lock" data-buy="${id}">👑 Sahip</button>`:
+      lk==='ach'?`<button class="price lock" data-buy="${id}">🏅 ${ach.t}</button>`:
+      lk==='lvl'?`<button class="price lock" data-buy="${id}">🔒 Seviye ${it.lvl}</button>`:
+      `<button class="price" data-buy="${id}">${deal?`<s>${it.price}</s> `:''}${pr} 🥚</button>`;
+    const tag=deal?'<em class="tag">Günün fırsatı</em>':it.ach&&!own?'<em class="tag ach">Başarım ödülü</em>':'';
+    return `<div class="item${eq?' eq':''}${lk?' locked':''}">${tag}${pvHTML(shopTab,id,it)}<b>${it.n}</b>${btn}</div>`}).join('');
   box.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(shopTab,b.dataset.buy));
+  requestAnimationFrame(drawPreviews);
 }
 function buy(kind,id){
   const it=SHOP[kind][id];
   if(!P.own[kind].includes(id)){
-    if(it.premium){shopTab='prem';renderShop();return}
-    if(P.eggs<it.price){toast(`${it.price-P.eggs} 🥚 daha lazım. Görevler ve günün tarlası iyi kazandırır!`);return}
-    P.eggs-=it.price;P.own[kind].push(id);P.stats.bought++;sfx.magic();toast(`${it.n} senin!`);checkAch()}
+    const lk=lockOf(kind,id),pr=priceOf(kind,id);
+    if(lk==='prem'){shopTab='prem';renderShop();return}
+    if(lk==='ach'){const a=ACH.find(x=>x.id===it.ach);toast(`${a.i} "${a.t}" başarımını aç: ${a.d.toLowerCase()}`);return}
+    if(lk==='lvl'){toast(`Seviye ${it.lvl} olunca açılır. Oynadıkça seviye atlarsın.`);return}
+    if(P.eggs<pr){toast(`${pr-P.eggs} 🥚 daha lazım. Görevler ve günün tarlası iyi kazandırır!`);return}
+    P.eggs-=pr;P.own[kind].push(id);P.stats.bought++;sfx.magic();toast(`${it.n} senin!`);checkAch()}
   else sfx.click();
   P.eq[kind]=id;save();
   TH=THEMES[P.eq.theme];SK=SLINGS[P.eq.sling];TR=TRAILS[P.eq.trail];
@@ -1027,7 +1162,7 @@ function buy(kind,id){
   renderShop();
 }
 document.querySelectorAll('#shopTabs button').forEach(b=>b.onclick=()=>{shopTab=b.dataset.t;sfx.click();renderShop()});
-$('freeEggs').onclick=()=>{if(P.freeAt>Date.now())return;rewarded('bedava-yumurta',()=>{P.freeAt=Date.now()+2*3600e3;addEggs(25,'Bedava yumurta');renderShop()})};
+$('freeEggs').onclick=()=>{if(P.freeAt>Date.now()||adDay().free>=AD_CAP.free)return;rewarded('bedava-yumurta',()=>{adDay().free++;P.freeAt=Date.now()+90*60e3;addEggs(25,'Bedava yumurta');renderShop()})};
 
 function renderQuests(){
   ensureQuests();
