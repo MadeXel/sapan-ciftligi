@@ -144,14 +144,113 @@ body.t-night .cloud{background:rgba(180,200,240,.18)}
 #doors.shut .door{transform:none}
 
 /* menu */
-#menu{background:linear-gradient(rgba(20,30,12,.05),rgba(20,30,12,.55) 60%,rgba(20,30,12,.75))}
+/* ---- cozy farm menu ---- */
+#menu{justify-content:flex-start;padding:0;background:linear-gradient(var(--sky1),var(--sky2) 70%);overflow:hidden}
+#menu .msky{position:absolute;inset:0 0 40% 0;pointer-events:none}
+#menu .sun{top:calc(env(safe-area-inset-top,0px) + 70px);left:auto;right:7%;width:58px;height:58px}
+#menu .mtop{position:relative;z-index:3;width:100%;max-width:420px;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 0;margin:0}
+#menu .greet{background:rgba(255,246,224,.9);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.15)}
+#menu .eggs{background:rgba(255,246,224,.9);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.roof{position:relative;z-index:2;width:100%;max-width:420px;height:190px;flex:none}
+.beam{position:absolute;left:-10px;right:-10px;top:10px;height:18px;border-radius:4px;background:repeating-linear-gradient(90deg,#8E5B30 0 60px,#7F512A 60px 62px);border-bottom:4px solid #5E3818;box-shadow:0 6px 10px rgba(0,0,0,.18)}
+.msign{position:absolute;left:50%;top:22px;margin-left:-130px;width:260px;padding-top:26px}
+.msign::before,.msign::after{height:34px}
+.msign .sign{padding:10px 20px 14px}
+.msign .sign h1{font-size:50px}
+.lantern{position:absolute;right:22px;top:24px;width:34px;height:96px;transform-origin:50% 0;animation:lsway 4.2s ease-in-out infinite}
+.lantern.ring{animation:lring .9s ease-out}
+.lrope{position:absolute;left:16px;top:0;width:2px;height:36px;background:#5E3818}
+.lbody{position:absolute;left:3px;top:34px;width:28px;height:40px;border-radius:8px 8px 6px 6px;background:rgba(255,236,170,.35);border:3px solid #3F2A16;box-shadow:inset 0 0 0 2px rgba(255,255,255,.15)}
+.lbody::before{content:"";position:absolute;left:4px;right:4px;top:-9px;height:7px;border-radius:4px 4px 0 0;background:#3F2A16}
+.lbody i{position:absolute;left:8px;top:10px;width:6px;height:12px;border-radius:50% 50% 45% 45%;background:#FFC94A;box-shadow:0 0 10px 4px rgba(255,190,70,.8);animation:flame 1.6s ease-in-out infinite}
+body.t-day .lbody i,body.t-morning .lbody i{opacity:.35;box-shadow:none}
+body.t-evening .lantern::after,body.t-night .lantern::after{content:"";position:absolute;left:-60px;top:-6px;width:154px;height:154px;border-radius:50%;background:radial-gradient(rgba(255,200,100,.35),rgba(255,200,100,0) 65%);pointer-events:none}
+@keyframes lsway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes lring{0%{transform:rotate(0)}20%{transform:rotate(-16deg)}45%{transform:rotate(12deg)}70%{transform:rotate(-6deg)}100%{transform:rotate(0)}}
+@keyframes flame{50%{transform:scaleY(.8) translateY(2px)}}
+.farm{position:relative;z-index:1;flex:1 1 auto;min-height:96px;width:100%;display:flex;align-items:flex-end;justify-content:center;margin-top:-40px}
+.land{position:relative;width:100%;max-width:520px;aspect-ratio:2/1;margin-bottom:-6px}
+.land svg{position:absolute;inset:0;width:100%;height:100%}
+.land svg.far{inset:auto 0 45% 0;height:115%}
+.blades{transform-box:fill-box;transform-origin:center;animation:spin 9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.win{fill:#9CC9DD;stroke:#6E4A2A;stroke-width:2}
+body.t-evening .win,body.t-night .win{fill:#FFD66B;filter:drop-shadow(0 0 5px #FFC94A)}
+.smoke circle{fill:rgba(255,255,255,.7);transform-box:fill-box;transform-origin:center;animation:smoke 4.5s linear infinite;opacity:0}
+.smoke circle:nth-child(2){animation-delay:1.5s}.smoke circle:nth-child(3){animation-delay:3s}
+body.t-night .smoke circle{fill:rgba(200,210,235,.45)}
+@keyframes smoke{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:.9}100%{opacity:0;transform:translate(14px,-38px) scale(2)}}
+.pets{position:absolute;inset:0;pointer-events:none}
+.pet{position:absolute;bottom:var(--b);left:var(--x);transform:translateX(-50%);pointer-events:auto;line-height:1;padding:4px;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.pet .walk{display:block;animation:walk var(--w) ease-in-out var(--dl) infinite}
+.pet .em{display:block;font-size:var(--s);filter:drop-shadow(0 3px 0 rgba(0,0,0,.18));animation:bob 2.4s ease-in-out var(--dl) infinite}
+.pet::after{content:"";position:absolute;left:18%;right:18%;bottom:1px;height:6px;border-radius:50%;background:rgba(0,0,0,.18);z-index:-1}
+.pet.hop .em{animation:hop .55s cubic-bezier(.3,1.6,.5,1)}
+.pet.sleep .walk{animation:none}.pet.sleep .em{animation:breathe 3s ease-in-out infinite;transform-origin:50% 100%}
+.pet .zz{position:absolute;right:-2px;top:-6px;font-style:normal;font-weight:800;font-size:13px;color:var(--cream);opacity:0;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+.pet.sleep .zz{animation:zz 2.6s ease-in-out infinite}
+.bubble{position:absolute;left:50%;bottom:100%;transform:translate(-50%,6px) scale(.6);opacity:0;white-space:nowrap;background:var(--cream);color:var(--ink);font-weight:800;font-size:13px;border-radius:12px;padding:3px 10px 4px;border:2px solid var(--wood-d);pointer-events:none;transition:all .25s cubic-bezier(.3,1.6,.5,1)}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--wood-d);border-bottom:0}
+.pet.talk .bubble{opacity:1;transform:translate(-50%,-2px) scale(1)}
+.pet.edge-l .bubble,.pond .bubble{left:0;transform:translate(0,6px) scale(.6);transform-origin:left bottom}
+.pet.edge-l.talk .bubble,.pond .pet.talk .bubble{transform:translate(0,-2px) scale(1)}
+.pet.edge-r .bubble{left:auto;right:0;transform:translate(0,6px) scale(.6);transform-origin:right bottom}
+.pet.edge-r.talk .bubble{transform:translate(0,-2px) scale(1)}
+.pet.edge-l .bubble::after,.pond .bubble::after{left:18px}.pet.edge-r .bubble::after{left:auto;right:12px}
+@keyframes walk{0%,100%{transform:translateX(0) scaleX(1)}46%{transform:translateX(var(--r)) scaleX(1)}50%{transform:translateX(var(--r)) scaleX(-1)}96%{transform:translateX(0) scaleX(-1)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes hop{40%{transform:translateY(-18px) scale(1.1,.95)}}
+@keyframes breathe{0%,100%{transform:rotate(-78deg) scale(1)}50%{transform:rotate(-78deg) scale(1.06)}}
+@keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-18px)}}
+.pond{position:absolute;z-index:30;left:5%;bottom:10%;width:23%;aspect-ratio:2.4/1;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#9BDDF5,#4FA7D1 70%);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12),0 2px 0 rgba(255,255,255,.4)}
+.pond .pet{left:50%;bottom:10%;--s:30px}
+.pond .pet .em{clip-path:inset(0 0 38% 0);animation:bob 3s ease-in-out infinite}
+.pond .pet::after{display:none}
+.spout{position:absolute;left:50%;bottom:62%;width:0;height:0}
+.spout i{position:absolute;width:5px;height:5px;border-radius:50%;background:#CDEFFF;opacity:0;animation:spout 5s ease-out infinite}
+.spout i:nth-child(1){--dx:-9px}.spout i:nth-child(2){--dx:0;animation-delay:.08s}.spout i:nth-child(3){--dx:9px;animation-delay:.16s}
+.pond.splash .spout i{animation:spout 1s ease-out}
+@keyframes spout{0%,70%{opacity:0;transform:translate(0,0)}78%{opacity:1;transform:translate(calc(var(--dx)*.5),-18px)}100%{opacity:0;transform:translate(var(--dx),-6px)}}
+.bugs{position:absolute;left:0;right:0;bottom:30%;height:70%;pointer-events:none}
+.bug{position:absolute;font-size:14px;animation:flutter var(--t) ease-in-out var(--dl) infinite}
+.fly{position:absolute;width:5px;height:5px;border-radius:50%;background:#FFF2A0;box-shadow:0 0 8px 3px rgba(255,235,120,.7);animation:glowfly var(--t) ease-in-out var(--dl) infinite}
+@keyframes flutter{0%,100%{transform:translate(0,0) rotate(-8deg)}25%{transform:translate(30px,-16px) rotate(8deg)}50%{transform:translate(60px,4px) rotate(-6deg)}75%{transform:translate(24px,12px) rotate(6deg)}}
+@keyframes glowfly{0%,100%{transform:translate(0,0);opacity:.2}30%{opacity:1}50%{transform:translate(26px,-14px);opacity:.6}80%{opacity:1}}
+.flyer{position:absolute;top:30%;left:-60px;font-size:30px;opacity:0}
+.flyer.go{animation:flyby 9s linear}
+@keyframes flyby{0%{opacity:0;transform:translate(0,20px)}8%{opacity:1}50%{transform:translate(55vw,-10px)}92%{opacity:1}100%{opacity:0;transform:translate(calc(100vw + 80px),10px)}}
+.porch{position:relative;z-index:2;flex:none;width:100%;max-width:520px;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 14px);border-radius:26px 26px 0 0;
+  background:linear-gradient(rgba(255,210,140,.1),rgba(0,0,0,.08)),repeating-linear-gradient(180deg,#A36D3D 0 38px,#8C5A30 38px 41px);border-top:5px solid #6B4222;box-shadow:0 -8px 20px rgba(0,0,0,.2)}
+body.t-evening .porch,body.t-night .porch{background:radial-gradient(120% 70% at 90% 0%,rgba(255,190,90,.22),rgba(255,190,90,0) 60%),repeating-linear-gradient(180deg,#8E5C33 0 38px,#784C29 38px 41px)}
+.notes{display:flex;gap:10px;margin-top:-34px}
+.note{position:relative;flex:1;min-width:0;background:#FFF6E0;color:var(--ink);border-radius:4px 4px 10px 10px;padding:12px 6px 7px;box-shadow:0 4px 0 rgba(0,0,0,.18),inset 0 -10px 12px -10px rgba(120,80,30,.25);text-align:center}
+.note::before{content:"";position:absolute;left:50%;top:-5px;margin-left:-7px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FF8A7A,#C8453A 60%);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.note.n1{transform:rotate(-2.5deg)}.note.n2{transform:rotate(1.5deg) translateY(3px)}.note.n3{transform:rotate(-1deg)}
+.note small{display:block;font-size:12px;font-weight:800;color:#8A6D45;line-height:1}
+.note b{display:block;font-size:22px;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note .bar.lb{margin:4px 10px 1px;height:6px;background:#EADBB8}
+.btn.barnbtn{position:relative;margin-top:14px;font-size:30px;padding:9px 18px 12px;color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,.25);
+  background:repeating-linear-gradient(90deg,#C8453A 0 44px,#B63C32 44px 47px);box-shadow:inset 0 0 0 4px #C8453A,inset 0 0 0 7px #FFF6E0,0 6px 0 var(--barn-d)}
+.btn.barnbtn:active{box-shadow:inset 0 0 0 4px #C8453A,inset 0 0 0 7px #FFF6E0,0 2px 0 var(--barn-d)}
+.btn.barnbtn span{position:relative}
+.btn.bale{margin-top:12px;color:var(--ink);padding:7px 14px 9px;line-height:1.1;
+  background:linear-gradient(90deg,transparent 18%,#9C6A2E 18%,#9C6A2E 20.5%,transparent 20.5%,transparent 79.5%,#9C6A2E 79.5%,#9C6A2E 82%,transparent 82%),repeating-linear-gradient(115deg,#F2C14E 0 5px,#E8B23E 5px 7px,#F6CD68 7px 11px);
+  box-shadow:0 5px 0 #B98A1E,inset 0 2px 0 rgba(255,255,255,.4)}
+.btn.bale:active{box-shadow:0 1px 0 #B98A1E}
+.btn.bale .dtitle{font-size:21px;font-weight:800;background:rgba(255,246,224,.75);border-radius:8px;padding:0 8px}
+.btn.bale small{display:block;font-size:13px;font-weight:800;margin-top:3px;opacity:.85}
+#menu .icons{margin-top:14px}
+#menu .ib{background:linear-gradient(rgba(255,255,255,.12),rgba(0,0,0,.05)),repeating-linear-gradient(180deg,#C48A52 0 15px,#B47B45 15px 16px);color:var(--cream);text-shadow:0 1px 0 rgba(0,0,0,.35);border-color:#5E3818}
+#menu .ib i{height:32px}
+#menu .ib i svg{width:24px;height:24px;color:var(--cream);filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
+@media (max-height:720px){.roof{height:160px}.msign .sign h1{font-size:42px}.msign{padding-top:20px}.btn.barnbtn{font-size:26px;padding:7px 18px 9px}.notes .note b{font-size:19px}}
+@media (prefers-reduced-motion:reduce){.pet .walk,.pet .em,.lantern,.smoke circle,.bug,.fly,.blades{animation:none!important}}
 .greet{flex:1;min-width:0;border-radius:18px;padding:3px 14px 5px;font-weight:700;font-size:14px;line-height:1.25;background:rgba(0,0,0,.28)}
 .menu-body{width:100%;max-width:340px;text-align:center;margin-bottom:auto}
 .tiles{display:flex;gap:10px;margin:22px 0 4px}
 .tile{flex:1;border-radius:16px;padding:6px 8px 7px;background:rgba(0,0,0,.28);text-align:center}
 .tile b{display:block;font-size:24px;line-height:1.1;font-weight:800}
 .tile span{font-size:13px;opacity:.85;font-weight:700}
-.menu-body .btn.red{font-size:30px;padding:10px 18px 13px;margin-top:16px}
 .menu-body .btn.plain{background:rgba(255,246,224,.95)}
 
 /* game over */
@@ -303,12 +402,62 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
 <div id="toast" class="wood"></div>
 
 <section class="screen" id="menu" hidden>
+  <div class="msky" aria-hidden="true"><div class="stars"></div><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="flyer" id="flyer"></div></div>
   <div class="mtop"><div class="greet" id="greet"></div><div class="eggs" id="mEggs">🥚 0</div></div>
-  <div class="menu-body">
-    <div class="hang"><div class="sign wood nails"><h1>Sapan<br>Çiftliği</h1></div></div>
-    <div class="tiles"><div class="tile"><b id="mLvl">Sv. 1</b><div class="bar lb"><i id="mLvlBar"></i></div></div><div class="tile"><b id="mBest">0</b><span>rekor</span></div><div class="tile"><b id="mDisc">1/12</b><span>hayvan</span></div></div>
-    <button class="btn red" id="play">Oyna</button>
-    <button class="btn hay" id="dailyBtn">Günün tarlası #<span id="dNo">1</span><small id="dMod"></small></button>
+  <div class="roof">
+    <div class="beam"></div>
+    <div class="hang msign"><div class="sign wood nails"><h1>Sapan<br>Çiftliği</h1></div></div>
+    <button class="lantern" id="lantern" aria-label="Fener"><span class="lrope"></span><span class="lbody"><i></i></span></button>
+  </div>
+  <div class="farm" id="farm">
+    <div class="land">
+      <svg class="far" viewBox="0 0 400 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path d="M0 110 C60 70 120 60 190 88 S320 50 400 72 V160 H0Z" fill="var(--hill2)" opacity=".45"/>
+        <path d="M0 132 C80 104 170 112 240 124 S350 110 400 104 V160 H0Z" fill="var(--hill2)" opacity=".7"/>
+        <g transform="translate(96 62)">
+          <path d="M-7 58 L-3 6 H3 L7 58Z" fill="#EFE3CC" stroke="#8A6A45" stroke-width="1.5"/>
+          <path d="M-5 8 L0 -1 L5 8Z" fill="#B83A30"/>
+          <g class="blades"><path d="M0 4 L3 -22 L-1 -22Z M0 4 L26 7 L26 3Z M0 4 L-3 30 L1 30Z M0 4 L-26 1 L-26 5Z" fill="#FFF6E0" stroke="#8A6A45" stroke-width="1"/><circle cx="0" cy="4" r="2.5" fill="#6B4222"/></g>
+        </g>
+        <g fill="var(--hill1)" opacity=".8"><circle cx="300" cy="104" r="9"/><circle cx="310" cy="100" r="11"/><circle cx="322" cy="105" r="8"/><rect x="309" y="108" width="3" height="8" fill="#6B4222"/></g>
+      </svg>
+      <svg viewBox="0 0 400 200" aria-hidden="true">
+        <path d="M0 118 C70 92 150 96 230 112 S350 100 400 90 V200 H0Z" fill="var(--hill2)"/>
+        <g transform="translate(34 88)">
+          <rect x="44" y="-14" width="11" height="24" fill="#8C4A3A"/>
+          <g class="smoke"><circle cx="49" cy="-20" r="5"/><circle cx="49" cy="-20" r="5"/><circle cx="49" cy="-20" r="5"/></g>
+          <path d="M0 26 L34 0 L68 26 V64 H0Z" fill="#E9D7B4" stroke="#8A6A45" stroke-width="2.5"/>
+          <path d="M-6 28 L34 -4 L74 28" fill="none" stroke="#8C4A3A" stroke-width="7" stroke-linecap="round"/>
+          <rect class="win" x="10" y="32" width="16" height="14" rx="2"/>
+          <rect class="win" x="42" y="32" width="16" height="14" rx="2"/>
+          <rect x="28" y="44" width="12" height="20" fill="#8A5A34"/>
+        </g>
+        <g transform="translate(296 78)">
+          <path d="M0 34 L38 4 L76 34 V80 H0Z" fill="#B83A30" stroke="#6E2019" stroke-width="3"/>
+          <path d="M-6 36 L38 0 L82 36" fill="none" stroke="#5B3A22" stroke-width="7" stroke-linecap="round"/>
+          <rect x="24" y="46" width="28" height="34" fill="#9E2F27" stroke="#FFF6E0" stroke-width="3"/>
+          <path d="M24 46 L52 80 M52 46 L24 80" stroke="#FFF6E0" stroke-width="3"/>
+          <circle class="win" cx="38" cy="25" r="6"/>
+        </g>
+        <g stroke="#8A5A34" stroke-width="3" stroke-linecap="round" opacity=".75">
+          <path d="M112 150 H286"/><path d="M112 140 H286"/>
+          <path d="M116 134 V156 M150 134 V156 M184 134 V156 M218 134 V156 M252 134 V156 M284 134 V156"/>
+        </g>
+        <path d="M0 150 C90 138 200 142 280 150 S370 148 400 144 V200 H0Z" fill="var(--hill1)"/>
+      </svg>
+      <div class="pond" id="pond" hidden><span class="spout"><i></i><i></i><i></i></span><button class="pet whale" data-lv="10" aria-label="Balina"><span class="walk"><span class="em">🐳</span></span><i class="zz">z</i><span class="bubble"></span></button></div>
+      <div class="pets" id="pets"></div>
+      <div class="bugs" id="bugs" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="porch">
+    <div class="notes">
+      <div class="note n1"><small>Seviye</small><b id="mLvl">1</b><div class="bar lb"><i id="mLvlBar"></i></div></div>
+      <div class="note n2"><small>Rekor</small><b id="mBest">0</b></div>
+      <div class="note n3"><small>Defter</small><b id="mDisc">1/12</b></div>
+    </div>
+    <button class="btn barnbtn" id="play"><span>Oyna</span></button>
+    <button class="btn bale" id="dailyBtn"><span class="dtitle">Günün tarlası #<span id="dNo">1</span></span><small id="dMod"></small></button>
     <div class="icons">
       <button class="ib" id="shopBtn"><i>🧺</i>Pazar</button>
       <button class="ib" id="questBtn"><i>📜</i>Görevler<em class="badge" id="qBadge" hidden>1</em></button>
@@ -913,6 +1062,49 @@ if(NATIVE){
   // web payments (Stripe, tip link) are not allowed for digital goods inside store apps; IAP comes later
   const pt=document.querySelector('#shopTabs [data-t=prem]');if(pt)pt.remove();
 }
+/* ---------- cozy farm (menu) ---------- */
+const PET_SAY=[['Cik cik!','Acıktım!','Büyüyünce fare olacağım'],['Cik?','Peynir var mı?','Kuyruğuma basma!'],['Havuç?','Zıp zıp!','Kulaklarım rüzgarda'],
+  ['Miyav~','Mırr...','Beni sev, sonra fırlat'],['Hav hav!','Top at!','Kuyruğum durmuyor'],['Hönk!','Çamur zamanı!','Bugün temizim, söz'],
+  ['Meee!','Yün yüne...','Kimse beni kırkmasın'],['İhahaa!','Dörtnala!','Yelem nasıl?'],['Möö!','Süt taze!','Çayır güzel bugün'],
+  ['Pırrrt!','Hiç unutmam','Hortum selamı!'],['Fışşş!','Burası biraz dar','Göl mü bu? Okyanus nerede?']];
+const SLEEP_SAY=['Zzz...','5 dakika daha...','Uyuyordum ama...','Işığı kapat'];
+let farmDone=false;
+function renderFarm(){
+  const box=$('pets'),night=TOD==='night';box.innerHTML='';
+  // the player's own discoveries live here: always the biggest ones, then a random mix of the rest
+  let lv=[...disc].filter(l=>l<TOP).sort((a,b)=>b-a);
+  const pick=lv.slice(0,3).concat(lv.slice(3).sort(()=>Math.random()-.5)).slice(0,6);
+  while(pick.length<3)pick.push(0);
+  // keep the pond (left) clear when the whale lives there
+  const slots=(disc.has(TOP)?[.37,.48,.59,.69,.79,.9]:[.12,.28,.44,.58,.73,.88]).sort(()=>Math.random()-.5);
+  pick.forEach((l,i)=>{
+    const b=document.createElement('button');b.className='pet'+(night?' sleep':'')+(slots[i]<.25?' edge-l':slots[i]>.8?' edge-r':'');b.dataset.lv=l;b.setAttribute('aria-label',LV[l].n);
+    b.style.cssText=`--x:${slots[i]*100}%;--b:${11+Math.random()*8}%;--s:${24+l*3}px;--w:${7+Math.random()*6}s;--dl:${-Math.random()*6}s;--r:${(Math.random()<.5?-1:1)*(10+Math.random()*16)}px;z-index:${20-Math.round(slots[i]*4)}`;
+    b.innerHTML=`<span class="walk"><span class="em">${LV[l].e}</span></span><i class="zz">z</i><span class="bubble"></span>`;
+    box.appendChild(b)});
+  $('pond').hidden=!disc.has(TOP);if(night)$('pond').querySelector('.pet').classList.add('sleep');
+  // day: butterflies, night: fireflies
+  const bugs=$('bugs');bugs.innerHTML='';
+  for(let i=0;i<(night?9:3);i++){const e=document.createElement('span');e.className=night?'fly':'bug';if(!night)e.textContent='🦋';
+    e.style.cssText=`left:${5+Math.random()*80}%;top:${Math.random()*80}%;--t:${6+Math.random()*6}s;--dl:${-Math.random()*6}s`;bugs.appendChild(e)}
+  if(!farmDone){farmDone=true;
+    $('pets').parentNode.addEventListener('click',e=>{const p=e.target.closest('.pet');if(p)petTap(p)});
+    $('lantern').onclick=()=>{const l=$('lantern');l.classList.remove('ring');void l.offsetWidth;l.classList.add('ring');tone(1568,0,.6,'sine',.06);tone(2093,.05,.8,'sine',.04)};
+    // a unicorn that has been found sometimes flies over the farm
+    setInterval(()=>{if(state!=='menu'||!uniSeen||Math.random()<.5)return;const f=$('flyer');f.textContent='🦄';f.classList.remove('go');void f.offsetWidth;f.classList.add('go')},14000)}
+}
+function petTap(p){
+  const lv=+p.dataset.lv,b=p.querySelector('.bubble')||p.closest('.pond').querySelector('.bubble'),sleeping=p.classList.contains('sleep');
+  const line=sleeping?SLEEP_SAY[Math.random()*SLEEP_SAY.length|0]:PET_SAY[lv][Math.random()*3|0];
+  if(b){b.textContent=line}
+  p.classList.remove('hop','talk');void p.offsetWidth;p.classList.add('talk');if(!sleeping)p.classList.add('hop');
+  if(lv===TOP){const pd=$('pond');pd.classList.remove('splash');void pd.offsetWidth;pd.classList.add('splash')}
+  // bigger animals get deeper voices
+  const f=900-lv*65;if(sleeping)tone(220,0,.5,'sine',.05,160);else{tone(f,0,.09,'triangle',.08,f*1.25);tone(f*1.2,.1,.12,'triangle',.07,f)}
+  vib(8);clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('talk'),1600);
+  if(sleeping){p.classList.remove('sleep');clearTimeout(p._s);p._s=setTimeout(()=>{if(TOD==='night')p.classList.add('sleep')},5000)}
+}
+
 /* ---------- premium ---------- */
 function grantPremium(){if(P.premium)return;P.premium=true;
   for(const k of ['theme','sling','trail'])if(!P.own[k].includes('altin'))P.own[k].push('altin');
@@ -953,10 +1145,10 @@ function startGame(m){ensureAudio();sfx.click();m=m||'normal';
   const tag=$('modeTag');tag.hidden=mode!=='daily'&&ranked;tag.textContent=(mod?`Günün tarlası: ${mod.n}`:'')+(ranked?'':(mod?'. ':'')+'Sıralamasız oyun (bağlantı yok)');
   if(mode==='daily')toast(`Günün tarlası #${DAYNO}: ${mod.n}. ${mod.d}.`);
   else if(!P.tips.swap&&tutDone){P.tips.swap=1;save();toast('İpucu: sıradaki hayvana dokunursan yer değiştirirler. İlki her oyunda bedava.')}}
-function toMenu(){state='menu';setMode('normal');document.body.classList.add('chrome-off');bodies=[];parts=[];floats=[];cur=null;demoT=.4;
+function toMenu(){state='menu';setMode('normal');document.body.classList.add('chrome-off');bodies=[];parts=[];floats=[];cur=null;demoT=.4;$('modeTag').hidden=true;renderFarm();
   ['over','pause','book','second','shop','quests','lb'].forEach(i=>show(i,false));show('menu',true);refreshMenu();placeTut()}
-function refreshMenu(){$('greet').textContent=TODINFO.greet;$('mBest').textContent=fmt(best);
-  {const L=lvlOf(P.xp),a=xpAt(L),b=xpAt(L+1);$('mLvl').textContent='Sv. '+L;$('mLvlBar').style.width=(L>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
+function refreshMenu(){$('greet').textContent=({morning:'🌅 ',day:'☀️ ',evening:'🌇 ',night:'🌙 '}[TOD]||'')+TODINFO.greet;$('mBest').textContent=fmt(best);
+  {const L=lvlOf(P.xp),a=xpAt(L),b=xpAt(L+1);$('mLvl').textContent=L;$('mLvlBar').style.width=(L>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
   $('mDisc').textContent=(disc.size+(uniSeen?1:0))+'/12';$('dNo').textContent=DAYNO;
   $('dMod').textContent=P.daily.date===TODAY?`${TODAY_MOD.n}. Bugünkü en iyin: ${fmt(P.daily.best)}`:`Bugün: ${TODAY_MOD.n}. Herkes aynı tarlada!`;
   refreshEggs();badge();prefetch('normal');setTimeout(()=>prefetch('daily'),2300)}
@@ -1118,7 +1310,6 @@ function update(dt){
   if(state==='play'||state==='menu'){
     if(mod&&mod.wind)windX=mod.wind*Math.sin(time*.4);
     physics(dt);
-    if(state==='menu')demo(dt);
     if(state==='play'){gameT+=dt;if(!cur&&queued){loadT-=dt;if(loadT<=0){cur=queued;queued=null;if(!cur.uni)discover(cur.lv);updHud(true)}}}
     dangerMax=0;
     for(const b of bodies){b.age+=dt;
