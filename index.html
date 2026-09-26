@@ -113,15 +113,17 @@ body.t-night .cloud{background:rgba(180,200,240,.18)}
 .hills svg{position:absolute;bottom:0;width:100%;height:100%}
 .splash-top{position:relative;z-index:2;margin-top:4vh;text-align:center}
 .demo{position:relative;z-index:2;height:90px;width:260px;margin-top:auto;margin-bottom:10px}
-.demo span{position:absolute;top:10px;font-size:52px;line-height:1;left:50%;margin-left:-26px;filter:drop-shadow(0 5px 0 rgba(0,0,0,.18))}
-.demo .a{animation:inl 1.5s cubic-bezier(.5,0,.6,1) infinite}
-.demo .b{animation:inr 1.5s cubic-bezier(.5,0,.6,1) infinite}
-.demo .c{animation:popc 1.5s ease-out infinite;opacity:0}
-.demo .puff{animation:puff 1.5s ease-out infinite;opacity:0;font-size:60px}
-@keyframes inl{0%{transform:translateX(-105px);opacity:1}45%{transform:translateX(-26px)}50%{transform:translateX(-22px);opacity:1}52%,100%{opacity:0}}
-@keyframes inr{0%{transform:translateX(105px);opacity:1}45%{transform:translateX(26px)}50%{transform:translateX(22px);opacity:1}52%,100%{opacity:0}}
-@keyframes popc{0%,48%{opacity:0;transform:scale(.3)}60%{opacity:1;transform:scale(1.35)}72%,90%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.15) translateY(-10px)}}
-@keyframes puff{0%,46%{opacity:0;transform:scale(.4)}55%{opacity:.9;transform:scale(1.2)}70%,100%{opacity:0;transform:scale(1.8)}}
+.demo::before{content:"";position:absolute;left:50%;bottom:6px;width:120px;height:14px;margin-left:-60px;border-radius:50%;background:rgba(0,0,0,.14)}
+.demo span{position:absolute;top:10px;font-size:52px;line-height:1;left:50%;margin-left:-26px;opacity:0;will-change:transform,opacity}
+.demo .a{animation:inl 1.6s linear infinite}
+.demo .b{animation:inr 1.6s linear infinite}
+.demo .c{animation:popc 1.6s linear infinite}
+.demo .puff{animation:puff 1.6s linear infinite;font-size:60px}
+/* one timeline for all four layers: enter 0-10%, approach 10-46%, merge 46-52%, show 52-88%, leave 88-100% */
+@keyframes inl{0%{transform:translateX(-86px) scale(.4);opacity:0;animation-timing-function:cubic-bezier(.3,1.5,.6,1)}10%{transform:translateX(-80px) scale(1);opacity:1;animation-timing-function:cubic-bezier(.55,0,.8,.6)}46%{transform:translateX(-24px) scale(1);opacity:1}50%{transform:translateX(-10px) scale(.7);opacity:0}100%{opacity:0;transform:translateX(-10px) scale(.7)}}
+@keyframes inr{0%{transform:translateX(86px) scale(.4);opacity:0;animation-timing-function:cubic-bezier(.3,1.5,.6,1)}10%{transform:translateX(80px) scale(1);opacity:1;animation-timing-function:cubic-bezier(.55,0,.8,.6)}46%{transform:translateX(24px) scale(1);opacity:1}50%{transform:translateX(10px) scale(.7);opacity:0}100%{opacity:0;transform:translateX(10px) scale(.7)}}
+@keyframes popc{0%,47%{opacity:0;transform:scale(.3)}47%{animation-timing-function:cubic-bezier(.3,1.6,.5,1)}58%{opacity:1;transform:scale(1.2)}66%{transform:scale(1.1)}88%{opacity:1;transform:scale(1.1);animation-timing-function:cubic-bezier(.5,0,.9,.5)}100%{opacity:0;transform:scale(.2)}}
+@keyframes puff{0%,45%{opacity:0;transform:scale(.4)}52%{opacity:.85;transform:scale(1.15)}68%,100%{opacity:0;transform:scale(1.7)}}
 .loader{position:relative;z-index:2;width:min(300px,82vw);margin-bottom:calc(8vh + env(safe-area-inset-bottom,0px))}
 .fence{position:relative;height:46px;display:flex;justify-content:space-between;align-items:flex-end}
 .fence .rail{position:absolute;left:0;height:9px;border-radius:3px;background:var(--wood-l);border:2px solid var(--wood-d);transition:width .3s}
@@ -230,7 +232,7 @@ body.t-night .cloud{background:rgba(180,200,240,.18)}
   <div class="stars"></div><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
   <div class="hills"><svg viewBox="0 0 400 300" preserveAspectRatio="none">
     <path d="M0 120 C80 60 170 70 250 110 S360 90 400 70 V300 H0Z" fill="var(--hill2)"/>
-    <g transform="translate(300 64) scale(.8)">
+    <g transform="translate(342 80) scale(.58)">
       <path d="M0 40 L38 8 L76 40 V86 H0Z" fill="#B83A30" stroke="#6E2019" stroke-width="3"/>
       <path d="M-6 42 L38 4 L82 42" fill="none" stroke="#5B3A22" stroke-width="7" stroke-linecap="round"/>
       <rect x="24" y="50" width="28" height="36" fill="#9E2F27" stroke="#FFF6E0" stroke-width="3"/>
@@ -670,9 +672,9 @@ function setProg(p){prog=p;const n=Math.round(p*POSTS);postEls.forEach((el,i)=>e
 const lines=['Çitler çakılıyor…','Saman balyaları diziliyor…','Civcivler sayılıyor…','Sapan geriliyor…'];
 const demoPairs=[[0,1],[1,2],[2,3],[3,4],[4,5]];let dp=0;
 const demoEl=document.querySelector('.demo');
-setInterval(()=>{if(state!=='splash')return;dp=(dp+1)%(demoPairs.length+1);
+demoEl.querySelector('.a').addEventListener('animationiteration',()=>{if(state!=='splash')return;dp=(dp+1)%(demoPairs.length+1);
   const [a,c]=dp<demoPairs.length?demoPairs[dp]:[5,-1];
-  demoEl.querySelector('.a').textContent=LV[a].e;demoEl.querySelector('.b').textContent=LV[a].e;demoEl.querySelector('.c').textContent=c<0?'❓':LV[c].e},1500);
+  demoEl.querySelector('.a').textContent=LV[a].e;demoEl.querySelector('.b').textContent=LV[a].e;demoEl.querySelector('.c').textContent=c<0?'❓':LV[c].e});
 function splashTick(){
   if(state!=='splash')return;
   const el=performance.now()-t0,minT=Math.min(1,el/2200);
