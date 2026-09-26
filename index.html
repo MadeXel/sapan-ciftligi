@@ -25,6 +25,7 @@ body.t-morning{--sky1:#9ED6EE;--sky2:#FFE9C7;--sun:#FFD36B}
 body.t-evening{--bg1:#5A6E3A;--bg2:#34431F;--sky1:#E9875A;--sky2:#FBD29A;--hill1:#6E9A4E;--hill2:#4F7A38;--sun:#FF9B55}
 body.t-night{--bg1:#23384A;--bg2:#141F2C;--sky1:#0F1A33;--sky2:#2E4470;--hill1:#2E5A3A;--hill2:#1F412A;--sun:#F4F1D0}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
 html,body{height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 body{font-family:'Baloo 2',ui-rounded,system-ui,sans-serif;color:var(--cream);background:radial-gradient(120% 70% at 50% 0%,var(--bg1),var(--bg2) 75%) var(--bg2)}
 button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
@@ -64,6 +65,8 @@ footer{flex:none;display:flex;justify-content:center;gap:3px;padding:8px 10px 10
 
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 64px);z-index:70;left:0;right:0;margin:0 auto;width:max-content;transform:translateY(-30px) rotate(-2deg);opacity:0;border-radius:14px;padding:6px 18px 7px;font-weight:700;font-size:16px;text-align:center;max-width:88%;pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.5,.5,1);color:var(--cream);text-shadow:0 1px 0 var(--wood-dd)}
 #toast.show{opacity:1;transform:translateY(0) rotate(-1deg)}
+#toast.low{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateY(30px) rotate(-2deg)}
+#toast.low.show{transform:translateY(0) rotate(-1deg)}
 
 /* tutorial hand */
 #tut{position:absolute;z-index:3;pointer-events:none;transform:translate(-50%,0);text-align:center;width:280px}
@@ -147,7 +150,8 @@ body.t-night .cloud{background:rgba(180,200,240,.18)}
 /* ---- cozy farm menu ---- */
 #menu{justify-content:flex-start;padding:0;background:linear-gradient(var(--sky1),var(--sky2) 70%);overflow:hidden}
 #menu .msky{position:absolute;inset:0 0 40% 0;pointer-events:none}
-#menu .sun{top:calc(env(safe-area-inset-top,0px) + 70px);left:auto;right:7%;width:58px;height:58px}
+#menu .sun{top:calc(env(safe-area-inset-top,0px) + 205px);left:auto;right:9%;width:44px;height:44px}
+#menu .cloud.c1{top:34%}#menu .cloud.c2{top:48%}
 #menu .mtop{position:relative;z-index:3;width:100%;max-width:420px;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 0;margin:0}
 #menu .greet{background:rgba(255,246,224,.9);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.15)}
 #menu .eggs{background:rgba(255,246,224,.9);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.15)}
@@ -186,8 +190,8 @@ body.t-night .smoke circle{fill:rgba(200,210,235,.45)}
 .pet .em{display:block;font-size:var(--s);filter:drop-shadow(0 3px 0 rgba(0,0,0,.18));animation:bob 2.4s ease-in-out var(--dl) infinite}
 .pet::after{content:"";position:absolute;left:18%;right:18%;bottom:1px;height:6px;border-radius:50%;background:rgba(0,0,0,.18);z-index:-1}
 .pet.hop .em{animation:hop .55s cubic-bezier(.3,1.6,.5,1)}
-.pet.sleep .walk{animation:none}.pet.sleep .em{animation:breathe 3s ease-in-out infinite;transform-origin:50% 100%}
-.pet .zz{position:absolute;right:-2px;top:-6px;font-style:normal;font-weight:800;font-size:13px;color:var(--cream);opacity:0;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+.pet.sleep .walk{animation:none}.pet.sleep .em{animation:breathe 3.4s ease-in-out infinite;transform-origin:50% 100%;filter:drop-shadow(0 3px 0 rgba(0,0,0,.18)) brightness(.88) saturate(.85)}
+.pet .zz{position:absolute;right:-4px;top:-8px;font-style:normal;font-weight:800;font-size:12px;color:#DCE6FF;opacity:0;text-shadow:0 1px 0 rgba(0,0,0,.4);pointer-events:none}
 .pet.sleep .zz{animation:zz 2.6s ease-in-out infinite}
 .bubble{position:absolute;left:50%;bottom:100%;transform:translate(-50%,6px) scale(.6);opacity:0;white-space:nowrap;background:var(--cream);color:var(--ink);font-weight:800;font-size:13px;border-radius:12px;padding:3px 10px 4px;border:2px solid var(--wood-d);pointer-events:none;transition:all .25s cubic-bezier(.3,1.6,.5,1)}
 .bubble::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--wood-d);border-bottom:0}
@@ -200,10 +204,11 @@ body.t-night .smoke circle{fill:rgba(200,210,235,.45)}
 @keyframes walk{0%,100%{transform:translateX(0) scaleX(1)}46%{transform:translateX(var(--r)) scaleX(1)}50%{transform:translateX(var(--r)) scaleX(-1)}96%{transform:translateX(0) scaleX(-1)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes hop{40%{transform:translateY(-18px) scale(1.1,.95)}}
-@keyframes breathe{0%,100%{transform:rotate(-78deg) scale(1)}50%{transform:rotate(-78deg) scale(1.06)}}
+@keyframes breathe{0%,100%{transform:rotate(-8deg) scale(1,.96)}50%{transform:rotate(-8deg) scale(1.03,1)}}
 @keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-18px)}}
 .pond{position:absolute;z-index:30;left:5%;bottom:10%;width:23%;aspect-ratio:2.4/1;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#9BDDF5,#4FA7D1 70%);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12),0 2px 0 rgba(255,255,255,.4)}
 .pond .pet{left:50%;bottom:10%;--s:30px}
+.pond .zz{display:none}
 .pond .pet .em{clip-path:inset(0 0 38% 0);animation:bob 3s ease-in-out infinite}
 .pond .pet::after{display:none}
 .spout{position:absolute;left:50%;bottom:62%;width:0;height:0}
@@ -238,10 +243,11 @@ body.t-evening .porch,body.t-night .porch{background:radial-gradient(120% 70% at
   box-shadow:0 5px 0 #B98A1E,inset 0 2px 0 rgba(255,255,255,.4)}
 .btn.bale:active{box-shadow:0 1px 0 #B98A1E}
 .btn.bale .dtitle{font-size:21px;font-weight:800;background:rgba(255,246,224,.75);border-radius:8px;padding:0 8px}
-.btn.bale small{display:block;font-size:13px;font-weight:800;margin-top:3px;opacity:.85}
+.btn.bale small{display:inline-block;font-size:13px;font-weight:800;margin-top:4px;background:rgba(255,246,224,.75);border-radius:8px;padding:0 8px 1px;max-width:92%}
 #menu .icons{margin-top:14px}
 #menu .ib{background:linear-gradient(rgba(255,255,255,.12),rgba(0,0,0,.05)),repeating-linear-gradient(180deg,#C48A52 0 15px,#B47B45 15px 16px);color:var(--cream);text-shadow:0 1px 0 rgba(0,0,0,.35);border-color:#5E3818}
-#menu .ib i{height:32px}
+#menu .ib i{height:32px;width:100%;line-height:1;overflow:hidden}
+#muteIco{display:grid;place-items:center}
 #menu .ib i svg{width:24px;height:24px;color:var(--cream);filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
 @media (max-height:720px){.roof{height:160px}.msign .sign h1{font-size:42px}.msign{padding-top:20px}.btn.barnbtn{font-size:26px;padding:7px 18px 9px}.notes .note b{font-size:19px}}
 @media (prefers-reduced-motion:reduce){.pet .walk,.pet .em,.lantern,.smoke circle,.bug,.fly,.blades{animation:none!important}}
@@ -1073,16 +1079,16 @@ function renderFarm(){
   const box=$('pets'),night=TOD==='night';box.innerHTML='';
   // the player's own discoveries live here: always the biggest ones, then a random mix of the rest
   let lv=[...disc].filter(l=>l<TOP).sort((a,b)=>b-a);
-  const pick=lv.slice(0,3).concat(lv.slice(3).sort(()=>Math.random()-.5)).slice(0,6);
+  const pick=lv.slice(0,2).concat(lv.slice(2).sort(()=>Math.random()-.5)).slice(0,5);
   while(pick.length<3)pick.push(0);
   // keep the pond (left) clear when the whale lives there
-  const slots=(disc.has(TOP)?[.37,.48,.59,.69,.79,.9]:[.12,.28,.44,.58,.73,.88]).sort(()=>Math.random()-.5);
+  const slots=(disc.has(TOP)?[.38,.52,.66,.8,.93]:[.14,.32,.5,.68,.86]).sort(()=>Math.random()-.5);
   pick.forEach((l,i)=>{
-    const b=document.createElement('button');b.className='pet'+(night?' sleep':'')+(slots[i]<.25?' edge-l':slots[i]>.8?' edge-r':'');b.dataset.lv=l;b.setAttribute('aria-label',LV[l].n);
-    b.style.cssText=`--x:${slots[i]*100}%;--b:${11+Math.random()*8}%;--s:${24+l*3}px;--w:${7+Math.random()*6}s;--dl:${-Math.random()*6}s;--r:${(Math.random()<.5?-1:1)*(10+Math.random()*16)}px;z-index:${20-Math.round(slots[i]*4)}`;
+    const b=document.createElement('button');b.className='pet'+(night?' sleep':'')+(slots[i]<.25?' edge-l':slots[i]>.85?' edge-r':'');b.dataset.lv=l;b.setAttribute('aria-label',LV[l].n);
+    b.style.cssText=`--x:${slots[i]*100}%;--b:${11+Math.random()*8}%;--s:${24+Math.min(l,8)*2}px;--w:${7+Math.random()*6}s;--dl:${-Math.random()*6}s;--r:${(Math.random()<.5?-1:1)*(6+Math.random()*8)}px;z-index:${20-Math.round(slots[i]*4)}`;
     b.innerHTML=`<span class="walk"><span class="em">${LV[l].e}</span></span><i class="zz">z</i><span class="bubble"></span>`;
     box.appendChild(b)});
-  $('pond').hidden=!disc.has(TOP);if(night)$('pond').querySelector('.pet').classList.add('sleep');
+  $('pond').hidden=!disc.has(TOP);
   // day: butterflies, night: fireflies
   const bugs=$('bugs');bugs.innerHTML='';
   for(let i=0;i<(night?9:3);i++){const e=document.createElement('span');e.className=night?'fly':'bug';if(!night)e.textContent='🦋';
@@ -1628,7 +1634,8 @@ function renderQuests(){
 const tq=[];let tBusy=false;
 function toast(m){if(tq.includes(m))return;tq.push(m);if(!tBusy)nextToast()}
 function nextToast(){const t=$('toast'),m=tq.shift();if(!m){tBusy=false;t.classList.remove('show');return}
-  tBusy=true;t.textContent=m;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');setTimeout(nextToast,tq.length?1700:2500)}
+  tBusy=true;t.textContent=m;t.classList.remove('show');
+  t.classList.toggle('low',[...document.querySelectorAll('section.screen')].some(x=>!x.hidden&&x.id!=='splash'));void t.offsetWidth;t.classList.add('show');setTimeout(nextToast,tq.length?1700:2500)}
 function placeTut(){
   const t=$('tut'),on=state==='play'&&!tutDone;t.hidden=!on;if(!on)return;
   const r=cv.getBoundingClientRect(),s=stage.getBoundingClientRect();
