@@ -271,7 +271,8 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
 .cd svg{width:100%;height:100%;transform:rotate(-90deg)}
 .cd b{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:800;color:var(--barn)}
 .next .dot{position:relative;cursor:pointer}
-.swap{position:absolute;right:-12px;top:-3px;border-radius:9px;padding:0 5px 1px;font-size:10px;font-weight:800;background:var(--cream);color:var(--ink);border:2px solid var(--wood-d);line-height:1.3;white-space:nowrap}
+.swap{position:absolute;right:-7px;bottom:-5px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;line-height:1;background:#6FB358;color:#fff;border:2px solid var(--wood-d);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.swap.paid{background:var(--hay);color:var(--ink)}
 #ad{z-index:45;background:rgba(10,14,8,.88)}
 .adbox{margin:14px 0 4px;border-radius:16px;background:repeating-linear-gradient(45deg,#EFDDB8 0 12px,#F7EBD2 12px 24px);padding:18px 12px;font-size:15px;line-height:1.35}
 .mode-tag{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:3;border-radius:12px;padding:1px 12px 3px;font-weight:800;font-size:13px;background:rgba(0,0,0,.35);white-space:nowrap;pointer-events:none}
@@ -455,32 +456,32 @@ const TOP=LV.length-1;
 /* ---------- cosmetics ---------- */
 const THEMES={
  cayir:{n:'Çayır',price:0,lvl:1,stripe:['#66A84F','#6FB358'],tuft:'rgba(50,100,40,.55)',fl:['#FFF6D6','#FFD84D','#F7B6D2'],hay:'#D9B36B',straw:['#EFCB7E','#B8904C'],arrow:'rgba(120,80,30,.35)',border:'#3F7432',rail:'#B07A45',post:'#7A4B24',rope:'rgba(255,248,231,.6)'},
- sonbahar:{n:'Sonbahar',price:200,lvl:3,stripe:['#A99A46','#B6A64F'],tuft:'rgba(110,80,30,.5)',fl:['#D9582B','#E89A2E','#A23A1C'],leaf:true,hay:'#C98E52',straw:['#E3AE70','#9C6A38'],arrow:'rgba(100,60,20,.35)',border:'#5E4A20',rail:'#A0683A',post:'#6A3F1E',rope:'rgba(255,248,231,.6)',amb:'leaf'},
- kis:{n:'Kış',price:320,lvl:6,stripe:['#E4EDF4','#EDF3F8'],tuft:'rgba(130,160,190,.5)',fl:['#FFFFFF','#CFE2F0'],hay:'#C6DAE9',straw:['#FFFFFF','#A2BCD1'],arrow:'rgba(80,110,140,.35)',border:'#4F6B80',rail:'#8C6A4A',post:'#5E4632',rope:'rgba(60,90,120,.55)',amb:'snow'},
- lavanta:{n:'Lavanta',price:450,lvl:9,stripe:['#8A78BE','#9483C6'],tuft:'rgba(60,45,110,.5)',fl:['#EDE6FF','#C7B5F2','#FFFFFF'],hay:'#D8C08A',straw:['#F0DDA8','#AE9458'],arrow:'rgba(110,80,40,.35)',border:'#433868',rail:'#B07A45',post:'#6B4A2A',rope:'rgba(255,248,231,.6)',amb:'petal'},
+ sonbahar:{n:'Sonbahar',price:600,lvl:4,stripe:['#A99A46','#B6A64F'],tuft:'rgba(110,80,30,.5)',fl:['#D9582B','#E89A2E','#A23A1C'],leaf:true,hay:'#C98E52',straw:['#E3AE70','#9C6A38'],arrow:'rgba(100,60,20,.35)',border:'#5E4A20',rail:'#A0683A',post:'#6A3F1E',rope:'rgba(255,248,231,.6)',amb:'leaf'},
+ kis:{n:'Kış',price:1100,lvl:9,stripe:['#E4EDF4','#EDF3F8'],tuft:'rgba(130,160,190,.5)',fl:['#FFFFFF','#CFE2F0'],hay:'#C6DAE9',straw:['#FFFFFF','#A2BCD1'],arrow:'rgba(80,110,140,.35)',border:'#4F6B80',rail:'#8C6A4A',post:'#5E4632',rope:'rgba(60,90,120,.55)',amb:'snow'},
+ lavanta:{n:'Lavanta',price:1800,lvl:15,stripe:['#8A78BE','#9483C6'],tuft:'rgba(60,45,110,.5)',fl:['#EDE6FF','#C7B5F2','#FFFFFF'],hay:'#D8C08A',straw:['#F0DDA8','#AE9458'],arrow:'rgba(110,80,40,.35)',border:'#433868',rail:'#B07A45',post:'#6B4A2A',rope:'rgba(255,248,231,.6)',amb:'petal'},
  altin:{n:'Altın başak',premium:true,stripe:['#D2AA45','#DCB651'],tuft:'rgba(130,90,20,.5)',fl:['#FFF3B0','#F4D35E','#FFFFFF'],hay:'#B7874A',straw:['#E2B774','#8C6330'],arrow:'rgba(90,60,10,.35)',border:'#6E5418',rail:'#E0B83A',post:'#9C7A1C',rope:'rgba(255,248,231,.7)',amb:'spark'}};
 const RAINBOW=['#FF5E5E','#FFB84D','#FFE45E','#6FE07A','#5EC8FF','#9B7BFF'];
 const SLINGS={
  klasik:{n:'Klasik',price:0,lvl:1,post:'#7A4B24',band:'#5A2E14'},
- ahir:{n:'Ahır kırmızısı',price:120,lvl:2,post:'#B83A30',band:'#6E2019'},
- gece:{n:'Gece mavisi',price:180,lvl:4,post:'#2F4A7A',band:'#172845'},
- bambu:{n:'Bambu',price:250,lvl:6,post:'#7BA23F',band:'#3E5E1C',ring:'#C7E08A'},
- halat:{n:'Denizci halatı',price:320,lvl:8,post:'#2F4A7A',band:'#E8D9B0',band2:'#A8874F',ring:'#E8D9B0'},
- seker:{n:'Şeker kamışı',price:400,lvl:10,post:'#FFFFFF',band:'#E23B4E',band2:'#FFFFFF',ring:'#E23B4E'},
- gokkusagi:{n:'Gökkuşağı',price:500,lvl:12,post:'#8A5CC7',grad:RAINBOW,ring:'#FFE45E'},
- ates:{n:'Ateş',price:600,lvl:15,post:'#3A1A10',grad:['#FF3B1F','#FF9A1F','#FFE14D','#FF9A1F','#FF3B1F'],ring:'#FF7A1F',glow:'rgba(255,140,40,.35)'},
+ ahir:{n:'Ahır kırmızısı',price:300,lvl:3,post:'#B83A30',band:'#6E2019'},
+ gece:{n:'Gece mavisi',price:500,lvl:5,post:'#2F4A7A',band:'#172845'},
+ bambu:{n:'Bambu',price:800,lvl:8,post:'#7BA23F',band:'#3E5E1C',ring:'#C7E08A'},
+ halat:{n:'Denizci halatı',price:1200,lvl:11,post:'#2F4A7A',band:'#E8D9B0',band2:'#A8874F',ring:'#E8D9B0'},
+ seker:{n:'Şeker kamışı',price:1600,lvl:14,post:'#FFFFFF',band:'#E23B4E',band2:'#FFFFFF',ring:'#E23B4E'},
+ gokkusagi:{n:'Gökkuşağı',price:2200,lvl:18,post:'#8A5CC7',grad:RAINBOW,ring:'#FFE45E'},
+ ates:{n:'Ateş',price:3000,lvl:22,post:'#3A1A10',grad:['#FF3B1F','#FF9A1F','#FFE14D','#FF9A1F','#FF3B1F'],ring:'#FF7A1F',glow:'rgba(255,140,40,.35)'},
  okyanus:{n:'Okyanus',ach:'whale',post:'#1F6F8B',grad:['#1FA2C8','#7FE0F5','#1FA2C8'],ring:'#BFF3FF'},
  altin:{n:'Altın sapan',premium:true,post:'#E0B83A',band:'#8A6A10',ring:'#FFF3B0',glow:'rgba(255,220,100,.3)'}};
 const TRAILS={
  yok:{n:'İz yok',price:0,lvl:1,k:null},
- toz:{n:'Toz bulutu',price:80,lvl:2,k:'dust',rate:28,cols:['#EADBB8','#D2BC8E','#F6ECD4']},
- yildiz:{n:'Yıldız tozu',price:150,lvl:3,k:'star',rate:34,cols:['#FFFFFF','#CFE8FF','#E6F3FF']},
- kalp:{n:'Kalpler',price:220,lvl:5,k:'heart',rate:26,cols:['#FF6B8B','#FF9EB5','#E8436A']},
- baloncuk:{n:'Sabun köpüğü',price:280,lvl:7,k:'bubble',rate:22,cols:['#9FE3FF','#F7B6F2','#B8FFD0']},
- nota:{n:'Müzik notaları',price:340,lvl:9,k:'note',rate:12,cols:['#FFF6E0','#FFE45E']},
- konfeti:{n:'Konfeti',price:400,lvl:11,k:'confetti',rate:40,cols:RAINBOW},
- cicek:{n:'Çiçek yaprakları',price:480,lvl:13,k:'petal',rate:26,cols:['#FFC2D6','#FF9EBB','#FFFFFF']},
- gokkusagi:{n:'Gökkuşağı şeridi',price:650,lvl:16,k:'ribbon',ribbon:'rainbow'},
+ toz:{n:'Toz bulutu',price:250,lvl:2,k:'dust',rate:28,cols:['#EADBB8','#D2BC8E','#F6ECD4']},
+ yildiz:{n:'Yıldız tozu',price:450,lvl:4,k:'star',rate:34,cols:['#FFFFFF','#CFE8FF','#E6F3FF']},
+ kalp:{n:'Kalpler',price:700,lvl:6,k:'heart',rate:26,cols:['#FF6B8B','#FF9EB5','#E8436A']},
+ baloncuk:{n:'Sabun köpüğü',price:950,lvl:9,k:'bubble',rate:22,cols:['#9FE3FF','#F7B6F2','#B8FFD0']},
+ nota:{n:'Müzik notaları',price:1250,lvl:12,k:'note',rate:12,cols:['#FFF6E0','#FFE45E']},
+ konfeti:{n:'Konfeti',price:1600,lvl:16,k:'confetti',rate:40,cols:RAINBOW},
+ cicek:{n:'Çiçek yaprakları',price:2000,lvl:19,k:'petal',rate:26,cols:['#FFC2D6','#FF9EBB','#FFFFFF']},
+ gokkusagi:{n:'Gökkuşağı şeridi',price:3200,lvl:24,k:'ribbon',ribbon:'rainbow'},
  simsek:{n:'Şimşek',ach:'combo5',k:'bolt',rate:11,cols:['#FFF26B','#FFFFFF']},
  kuyruklu:{n:'Kuyruklu yıldız',ach:'legend',k:'ribbon',ribbon:'#CFEAFF',plus:'star',rate:20,cols:['#FFFFFF','#CFE8FF']},
  altin:{n:'Altın iz',premium:true,k:'ribbon',ribbon:'gold',plus:'coin',rate:18,cols:['#F4D35E','#E0B83A','#FFF3B0']}};
@@ -500,22 +501,51 @@ const QPOOL=[
  {id:'sh50',t:'50 atış yap',goal:50,ev:'shot',r:20},
  {id:'daily',t:'Günün tarlasını oyna',goal:1,ev:'daily',r:40},
  {id:'uni',t:'Tek boynuzla bir hayvanı büyüt',goal:1,ev:'uni',r:50}];
+// k = stat key, g = goal; le = "lower is better" (ranks)
+const A=(id,i,t,d,r,k,g,le)=>({id,i,t,d,r,k,g,le,ok:s=>le?s[k]<=g:s[k]>=g});
 const ACH=[
- {id:'first',i:'🤝',t:'İlk birleşme',d:'İki hayvanı birleştir',r:10,ok:s=>s.merges>=1},
- {id:'cat',i:'🐱',t:'Kedi sever',d:'Bir kedi oluştur',r:15,ok:s=>s.madeMax>=3},
- {id:'sheep',i:'🐑',t:'Çoban',d:'Bir koyun oluştur',r:40,ok:s=>s.madeMax>=6},
- {id:'cow',i:'🐮',t:'Süt çiftliği',d:'Bir inek oluştur',r:80,ok:s=>s.madeMax>=8},
- {id:'whale',i:'🌊',t:'Okyanus çiftliği',d:'Zincirin sonuna ulaş',r:150,ok:s=>s.madeMax>=10},
- {id:'legend',i:'🌈',t:'Gökkuşağı',d:'İki dev hayvanı birleştir',r:300,ok:s=>s.legends>=1},
- {id:'combo5',i:'⚡',t:'Zincirleme',d:'x5 kombo yap',r:50,ok:s=>s.maxCombo>=5},
- {id:'p1k',i:'🥉',t:'Bin puan',d:'Tek oyunda 1.000 puan',r:20,ok:s=>s.bestScore>=1000},
- {id:'p5k',i:'🥈',t:'Beş bin',d:'Tek oyunda 5.000 puan',r:60,ok:s=>s.bestScore>=5000},
- {id:'p20k',i:'🥇',t:'Yirmi bin',d:'Tek oyunda 20.000 puan',r:150,ok:s=>s.bestScore>=20000},
- {id:'g10',i:'🎟️',t:'Müdavim',d:'10 oyun oyna',r:40,ok:s=>s.games>=10},
- {id:'g50',i:'🏅',t:'Çiftlik emektarı',d:'50 oyun oyna',r:120,ok:s=>s.games>=50},
- {id:'streak7',i:'📅',t:'Sadık çiftçi',d:'7 gün üst üste gel',r:100,ok:s=>s.streakMax>=7},
- {id:'book',i:'📖',t:'Tam defter',d:'12 hayvanın hepsini bul',r:200,ok:s=>s.book>=12},
- {id:'style',i:'🎨',t:'Stil sahibi',d:'Pazardan bir şey al',r:20,ok:s=>s.bought>=1}];
+ A('first','🤝','İlk birleşme','İki hayvanı birleştir',10,'merges',1),
+ A('cat','🐱','Kedi sever','Bir kedi oluştur',15,'madeMax',3),
+ A('sheep','🐑','Çoban','Bir koyun oluştur',40,'madeMax',6),
+ A('horse','🐴','Seyis','Bir at oluştur',60,'madeMax',7),
+ A('cow','🐮','Süt çiftliği','Bir inek oluştur',80,'madeMax',8),
+ A('elephant','🐘','Fil hafızası','Bir fil oluştur',120,'madeMax',9),
+ A('whale','🌊','Okyanus çiftliği','Zincirin sonuna ulaş',200,'madeMax',10),
+ A('whale5','🐳','Balina sürüsü','Toplam 5 balina oluştur',400,'whales',5),
+ A('legend','🌈','Gökkuşağı','İki dev hayvanı birleştir',300,'legends',1),
+ A('legend5','🌟','Efsaneler efsanesi','5 kez gökkuşağı oluştur',800,'legends',5),
+ A('m100','🧮','Çırak','Toplam 100 birleşme',20,'merges',100),
+ A('m1k','🔨','Usta','Toplam 1.000 birleşme',80,'merges',1000),
+ A('m10k','🏗️','Çiftlik mimarı','Toplam 10.000 birleşme',300,'merges',10000),
+ A('ts100k','💰','Yüz binlik kasa','Toplam 100.000 puan topla',60,'totalScore',100000),
+ A('ts1m','💎','Milyoner çiftçi','Toplam 1.000.000 puan topla',400,'totalScore',1000000),
+ A('combo5','⚡','Zincirleme','x5 kombo yap',50,'maxCombo',5),
+ A('storm','🌩️','Fırtına','25 kez x5 kombo yap',200,'combo5n',25),
+ A('p1k','🥉','Bin puan','Tek oyunda 1.000 puan',20,'bestScore',1000),
+ A('p5k','🥈','Beş bin','Tek oyunda 5.000 puan',60,'bestScore',5000),
+ A('p20k','🥇','Yirmi bin','Tek oyunda 20.000 puan',150,'bestScore',20000),
+ A('p50k','🏆','Elli bin','Tek oyunda 50.000 puan',300,'bestScore',50000),
+ A('p100k','👑','Yüz bin','Tek oyunda 100.000 puan',600,'bestScore',100000),
+ A('nosw','🎯','Sadık atıcı','Hiç değiştirmeden tek oyunda 10.000 puan',150,'noSwapBest',10000),
+ A('marathon','⏱️','Maraton','Tek oyunda 15 dakika hayatta kal',120,'timeMax',900),
+ A('uni10','🦄','Sihirbaz','Tek boynuzla 10 hayvan büyüt',60,'unis',10),
+ A('uni50','🔮','Büyücü','Tek boynuzla 50 hayvan büyüt',200,'unis',50),
+ A('rev10','💚','İnatçı','10 kez ikinci şans kullan',80,'revives',10),
+ A('g10','🎟️','Müdavim','10 oyun oyna',40,'games',10),
+ A('g50','🏅','Çiftlik emektarı','50 oyun oyna',120,'games',50),
+ A('g200','🎖️','Çiftlik efsanesi','200 oyun oyna',300,'games',200),
+ A('streak7','📅','Sadık çiftçi','7 gün üst üste gel',100,'streakMax',7),
+ A('streak30','🗓️','Bir aylık dostluk','30 gün üst üste gel',400,'streakMax',30),
+ A('daily7','🌾','Tarla gezgini','7 farklı günün tarlasını oyna',100,'dailyDays',7),
+ A('daily30','🚜','Tarla kurdu','30 farklı günün tarlasını oyna',300,'dailyDays',30),
+ A('top10','🔟','İlk on','Bir sıralamada ilk 10\'a gir',150,'bestRank',10,true),
+ A('podium','🏟️','Podyum','Bir sıralamada ilk 3\'e gir',400,'bestRank',3,true),
+ A('book','📖','Tam defter','12 hayvanın hepsini bul',200,'book',12),
+ A('style','🎨','Stil sahibi','Pazardan bir şey al',20,'bought',1),
+ A('coll10','🧺','Koleksiyoncu','10 kozmetiğe sahip ol',250,'owned',10),
+ A('lv10','⭐','Seviye 10','Çiftçi seviyesi 10 ol',100,'level',10),
+ A('lv20','🌠','Seviye 20','Çiftçi seviyesi 20 ol',300,'level',20),
+ A('lv30','✨','Seviye 30','Çiftçi seviyesi 30 ol',600,'level',30)];
 const DAILY=[20,30,40,50,60,80,150];
 const MODS=[
  {id:'buz',n:'Buzlu zemin',d:'Hayvanlar çok daha uzağa kayar',damp:.7,coul:16},
@@ -541,7 +571,7 @@ const TODAY_MOD=MODS[seedOf('m'+TODAY)%MODS.length];
 
 /* ---------- profile ---------- */
 const DEF={eggs:0,own:{theme:['cayir'],sling:['klasik'],trail:['yok']},eq:{theme:'cayir',sling:'klasik',trail:'yok'},
- streak:{last:'',day:0},quests:null,ach:{},stats:{games:0,merges:0,maxCombo:0,madeMax:0,legends:0,bestScore:0,streakMax:0,book:1,bought:0},
+ streak:{last:'',day:0},quests:null,ach:{},stats:{games:0,merges:0,maxCombo:0,madeMax:0,legends:0,bestScore:0,streakMax:0,book:1,bought:0,whales:0,combo5n:0,unis:0,swaps:0,revives:0,totalScore:0,timeMax:0,noSwapBest:0,dailyDays:0,bestRank:9999},
  premium:false,freeAt:0,daily:{date:'',best:0,bestLv:0},tips:{},xp:0,adDay:{date:'',free:0,dbl:0}};
 let P;try{P=JSON.parse(store.get('p','null'))}catch(e){P=null}
 P=Object.assign(JSON.parse(JSON.stringify(DEF)),P||{});
@@ -549,7 +579,7 @@ for(const k of ['own','eq','stats','streak','daily','tips','adDay'])P[k]=Object.
 const save=()=>store.set('p',JSON.stringify(P));
 let TH=THEMES[P.eq.theme]||THEMES.cayir,SK=SLINGS[P.eq.sling]||SLINGS.klasik,TR=TRAILS[P.eq.trail]||TRAILS.yok;
 /* level: only playing raises it (ads and eggs cannot) */
-const MAXL=30,xpAt=L=>Math.round(60*Math.pow(L-1,1.6));
+const MAXL=40,xpAt=L=>Math.round(80*Math.pow(L-1,1.9));
 const lvlOf=xp=>{let L=1;while(L<MAXL&&xp>=xpAt(L+1))L++;return L};
 for(const k in SHOP)for(const id in SHOP[k]){const it=SHOP[k][id];if(it.ach&&P.ach[it.ach]&&!P.own[k].includes(id))P.own[k].push(id)}
 const PREM_FREE_CD=30*60e3; // premium skips the ad, so it gets a cooldown instead
@@ -574,7 +604,7 @@ let bodies=[],pending=[],parts=[],floats=[],amb=[];
 let state='splash',mode='normal',score=0,best=+store.get('best',0),maxLv=0,shots=0,launched=0,merges=0,lastUni=false;
 let cur=null,next=null,loadT=0,aiming=false,down=null,pull=null,demoT=1,rand=Math.random,rand2=Math.random,mod=null;
 /* anti-cheat: every ranked game uses a server seed and records an event log the server replays */
-let gameT=0,LOG=[],mergeMax=0,queued=null,sess=null,ranked=false;
+let gameT=0,LOG=[],mergeMax=0,queued=null,sess=null,ranked=false,swapped=false;
 const tt=()=>Math.round(gameT*100)/100;
 let combo=0,lastMerge=-9,time=0,shake=0,dangerMax=0,idc=0,lastTick=0,lastBump=0,usedSecond=false,freeSwap=true,lastEarn=0;
 let disc=new Set(JSON.parse(store.get('disc','[0]')));let uniSeen=store.get('uni','0')==='1';
@@ -675,7 +705,7 @@ const vib=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 function addEggs(n,why){if(n<=0)return;P.eggs+=n;save();refreshEggs(true);sfx.coin();if(why)toast(`${why} +${n} 🥚`)}
 function refreshEggs(pop){for(const id of ['mEggs']){const e=$(id);e.textContent='🥚 '+fmt(P.eggs);if(pop){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}}
   const s=$('sEggs');if(s)s.textContent=fmt(P.eggs)}
-function stat(){return Object.assign({},P.stats,{book:disc.size+(uniSeen?1:0)})}
+function stat(){let owned=-3;for(const k in P.own)owned+=P.own[k].length;return Object.assign({},P.stats,{book:disc.size+(uniSeen?1:0),level:lvlOf(P.xp),owned})}
 function checkAch(){const s=stat();for(const a of ACH){if(!P.ach[a.id]&&a.ok(s)){P.ach[a.id]=1;save();addEggs(a.r,`Başarım: ${a.i} ${a.t}`);
   for(const k in SHOP)for(const id in SHOP[k])if(SHOP[k][id].ach===a.id){P.own[k].includes(id)||P.own[k].push(id);save();toast(`Özel ödül açıldı: ${SHOP[k][id].n}! Pazarda seni bekliyor.`)}}}}
 function ensureQuests(){if(P.quests&&P.quests.date===TODAY)return;const r=mulberry(seedOf('q'+TODAY)),pool=[...QPOOL],list=[];
@@ -752,6 +782,7 @@ async function submitScore(){
   if(!better)return;
   try{
     const res=await submitRun({session:sess.id,device:P.dev,name:P.nick,score,merges,events:LOG});sess=null;
+    {const rk=Math.min(res.daily||9999,res.week||9999,res.all||9999);if(rk<P.stats.bestRank){P.stats.bestRank=rk;checkAch()}}
     if(mode==='daily')P.lb.daily=Math.max(P.lb.daily,score);else{P.lb.week=Math.max(P.lb.week,score);P.lb.all=Math.max(P.lb.all,score)}
     save();
     const parts=[];if(res.daily)parts.push(`Günün tarlası #${res.daily}`);if(res.week)parts.push(`Hafta #${res.week}`);if(res.all)parts.push(`Genel #${res.all}`);
@@ -816,7 +847,7 @@ function setMode(m){
 }
 function reset(){
   bodies=[];pending=[];parts=[];floats=[];score=0;maxLv=0;shots=0;launched=0;merges=0;lastUni=false;combo=0;dangerMax=0;shake=0;
-  usedSecond=false;freeSwap=true;shownScore=-1;mergeMax=0;lastMerge=-9;gameT=0;LOG=[];queued=null;
+  usedSecond=false;freeSwap=true;swapped=false;shownScore=-1;mergeMax=0;lastMerge=-9;gameT=0;LOG=[];queued=null;
   if(mod&&mod.start){let tries=0;while(bodies.length<mod.start&&tries++<200){const lv=Math.floor(rand2()*4),r=LV[lv].r;
     const b=mk(lv,F+r+rand2()*(W-2*F-2*r),F+r+rand2()*(DANGER_Y-190-r));b.pop=1;b.age=2;
     if(bodies.every(o=>Math.hypot(o.x-b.x,o.y-b.y)>o.r+b.r+4&&o.lv!==b.lv||Math.hypot(o.x-b.x,o.y-b.y)>o.r+b.r+40))bodies.push(b)}}
@@ -853,7 +884,7 @@ function showSecond(){
 }
 function revive(){show('second',false);usedSecond=true;
   for(const b of bodies)if(b.y>H*.45){b.dead=true;burst(b.x,b.y,[b.uni?UNI.c:LV[b.lv].c,'#FFF8E7'],10,180)}
-  LOG.push(['r',tt(),bodies.filter(b=>b.dead).map(b=>b.uni?-1:b.lv)]);
+  P.stats.revives++;LOG.push(['r',tt(),bodies.filter(b=>b.dead).map(b=>b.uni?-1:b.lv)]);
   bodies=bodies.filter(b=>!b.dead);for(const b of bodies)b.danger=0;dangerMax=0;
   state='play';sfx.magic();toast('İkinci şans! Ağıl ferahladı.');if(!cur&&queued){cur=queued;queued=null;updHud(true)}}
 $('scAd').onclick=()=>rewarded('ikinci-sans',revive);
@@ -861,14 +892,15 @@ $('scEgg').onclick=()=>{if(P.eggs<40)return;P.eggs-=40;save();refreshEggs();revi
 $('scNo').onclick=()=>{show('second',false);finish()};
 function finish(){
   state='over';const rec=score>best;if(rec){best=score;store.set('best',best)}
-  const S=P.stats;S.games++;S.bestScore=Math.max(S.bestScore,score);
+  const S=P.stats;S.games++;S.bestScore=Math.max(S.bestScore,score);S.totalScore+=score;S.timeMax=Math.max(S.timeMax,Math.round(gameT));
+  if(!swapped)S.noSwapBest=Math.max(S.noSwapBest,score);if(mode==='daily'&&P.daily.date!==TODAY)S.dailyDays++;
   qev('game');qev('score',score);
   if(mode==='daily'){qev('daily');if(P.daily.date!==TODAY)P.daily={date:TODAY,best:0,bestLv:0};
     if(score>P.daily.best){P.daily.best=score;P.daily.bestLv=maxLv}}
   // eggs grow with the square root of score, so marathon games don't flood the economy
-  let earn=Math.max(1,Math.round(2.2*Math.sqrt(score/100)));if(mode==='daily')earn*=2;if(P.premium)earn=Math.ceil(earn*1.5);
+  let earn=Math.max(1,Math.round(1.6*Math.sqrt(score/100)));if(mode==='daily')earn*=2;if(P.premium)earn=Math.ceil(earn*1.5);
   lastEarn=earn;P.eggs+=earn;
-  const xpG=Math.round((merges+Math.floor(score/150))*(mode==='daily'?1.5:1)),L0=lvlOf(P.xp);P.xp+=xpG;const L1=lvlOf(P.xp);
+  const xpG=Math.round((10+Math.floor(score/300)+Math.floor(merges/3))*(mode==='daily'?1.5:1)),L0=lvlOf(P.xp);P.xp+=xpG;const L1=lvlOf(P.xp);
   save();checkAch();maybeInterstitial();
   $('xpGain').textContent=xpG;
   {const a=xpAt(L1),b=xpAt(L1+1);$('xpLvl').textContent='Sv. '+L1;$('xpBar').style.width=(L1>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
@@ -892,7 +924,7 @@ function countUp(el,to){const t0=performance.now(),d=Math.min(1400,400+to/4);
 function gain(v,x,y,label){
   if(!live())return;
   const t=tt();combo=t-lastMerge<1.3?combo+1:1;lastMerge=t;
-  const mult=Math.min(combo,5),pts=v*mult;score+=pts;
+  const mult=Math.min(combo,5),pts=v*mult;score+=pts;if(combo===5)P.stats.combo5n++;
   floats.push({x,y,t:0,txt:'+'+pts,big:false});
   if(mult>1){floats.push({x:W/2,y:H*.42,t:0,txt:`Kombo x${mult}!`,big:true,huge:true});qev('combo',mult);
     if(mult>P.stats.maxCombo){P.stats.maxCombo=mult;checkAch()}}
@@ -916,7 +948,7 @@ function merge(a,b){
   n.vx=(a.vx*ma+b.vx*mb)/M*.55;n.vy=(a.vy*ma+b.vy*mb)/M*.55;n.age=Math.max(a.age,b.age,1);
   clampIn(n);pending.push(n);
   burst(n.x,n.y,[LV[nl].c,'#FFF8E7',LV[a.lv].c],12+nl*3,120+nl*20);
-  if(live()){merges++;if(nl>mergeMax)mergeMax=nl;P.stats.merges++;if(nl>P.stats.madeMax){P.stats.madeMax=nl;checkAch()}else if(P.stats.merges===1)checkAch();
+  if(live()){merges++;if(nl>mergeMax)mergeMax=nl;P.stats.merges++;if(nl===TOP)P.stats.whales++;if(nl>P.stats.madeMax){P.stats.madeMax=nl;checkAch()}else if(P.stats.merges===1)checkAch();
     qev('make',nl);qev('merge');sfx.merge(nl);vib(10+nl*3);gain(LV[nl].v,n.x,n.y);discover(nl);if(nl>=8)shake=Math.max(shake,.25)}
 }
 function legend(x,y){
@@ -928,8 +960,8 @@ function legend(x,y){
 }
 function upgrade(o,u){
   burst(u.x,u.y,['#FF9ECF','#B89CFF','#8FE3FF','#FFF3A6'],28,220);
-  if(!live())return;LOG.push(['u',tt(),o.lv]);sfx.magic();vib(25);qev('uni');
-  if(o.lv<TOP){o.lv++;if(o.lv>mergeMax)mergeMax=o.lv;o.r=LV[o.lv].r;o.pop=.2;clampIn(o);gain(LV[o.lv].v,o.x,o.y,'Sihir!');discover(o.lv)}
+  if(!live())return;LOG.push(['u',tt(),o.lv]);sfx.magic();vib(25);qev('uni');P.stats.unis++;
+  if(o.lv<TOP){o.lv++;if(o.lv>mergeMax)mergeMax=o.lv;if(o.lv===TOP)P.stats.whales++;o.r=LV[o.lv].r;o.pop=.2;clampIn(o);gain(LV[o.lv].v,o.x,o.y,'Sihir!');discover(o.lv)}
   else gain(1024,o.x,o.y,'Sihir!');
 }
 function launch(){
@@ -944,11 +976,11 @@ function launch(){
 function burst(x,y,cols,n,spd){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=spd*(.3+Math.random()*.7);
   parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:0,max:.5+Math.random()*.5,c:cols[i%cols.length],s:2+Math.random()*4})}}
 function updSwap(){const n=$('next');let t=n.querySelector('.swap');if(!t){t=document.createElement('span');t.className='swap';n.appendChild(t)}
-  t.textContent=freeSwap?'⇅ bedava':'⇅ 10🥚'}
+  t.textContent='⇅';t.classList.toggle('paid',!freeSwap);n.title=freeSwap?'Dokun: yer değiştir (bedava)':'Dokun: yer değiştir (10 🥚)'}
 $('next').onclick=()=>{
   if(state!=='play'||!cur||!next)return;
   if(!freeSwap){if(P.eggs<10){toast('Değiştirmek için 10 🥚 gerek');return}P.eggs-=10;save()}
-  freeSwap=false;LOG.push(['w',tt()]);[cur,next]=[next,cur];sfx.click();vib(8);updHud(true);updSwap()};
+  if(!freeSwap)toast('-10 🥚');freeSwap=false;swapped=true;P.stats.swaps++;LOG.push(['w',tt()]);[cur,next]=[next,cur];sfx.click();vib(8);updHud(true);updSwap()};
 
 function physics(dt){
   const N=4,h=dt/N;
@@ -1197,7 +1229,7 @@ function renderBook(){
     g.className='';
     const got=ACH.filter(a=>P.ach[a.id]).length;
     $('bookSub').textContent=`${got}/${ACH.length} başarım açıldı.`;
-    g.innerHTML=ACH.map(a=>`<div class="ach${P.ach[a.id]?'':' lock'}"><i>${a.i}</i><div><b>${a.t}</b><span>${a.d}</span></div><em>${P.ach[a.id]?'✓':'+'+a.r+' 🥚'}</em></div>`).join('');
+    const st=stat();g.innerHTML=ACH.map(a=>`<div class="ach${P.ach[a.id]?'':' lock'}"><i>${a.i}</i><div><b>${a.t}</b><span>${a.d}${!P.ach[a.id]&&!a.le&&a.g>1&&a.k!=='madeMax'?` (${fmt(Math.min(st[a.k]||0,a.g))}/${fmt(a.g)})`:''}</span></div><em>${P.ach[a.id]?'✓':'+'+a.r+' 🥚'}</em></div>`).join('');
   }
 }
 document.querySelectorAll('#bookTabs button').forEach(b=>b.onclick=()=>{bookTab=b.dataset.t;sfx.click();renderBook()});
