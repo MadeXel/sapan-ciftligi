@@ -116,27 +116,43 @@ body.t-night .cloud{background:rgba(180,200,240,.18)}
 @keyframes drift{to{left:110%}}
 .hills{position:absolute;left:0;right:0;bottom:0;height:46%}
 .hills svg{position:absolute;bottom:0;width:100%;height:100%}
-.splash-top{position:relative;z-index:2;margin-top:4vh;text-align:center}
-.demo{position:relative;z-index:2;height:90px;width:260px;margin-top:auto;margin-bottom:10px}
-.demo::before{content:"";position:absolute;left:50%;bottom:6px;width:120px;height:14px;margin-left:-60px;border-radius:50%;background:rgba(0,0,0,.14)}
-.demo span{position:absolute;top:10px;font-size:52px;line-height:1;left:50%;margin-left:-26px;opacity:0;will-change:transform,opacity}
-.demo .a{animation:inl 1.6s linear infinite}
-.demo .b{animation:inr 1.6s linear infinite}
-.demo .c{animation:popc 1.6s linear infinite}
-.demo .puff{animation:puff 1.6s linear infinite;font-size:60px}
-/* one timeline for all four layers: enter 0-10%, approach 10-46%, merge 46-52%, show 52-88%, leave 88-100% */
-@keyframes inl{0%{transform:translateX(-86px) scale(.4);opacity:0;animation-timing-function:cubic-bezier(.3,1.5,.6,1)}10%{transform:translateX(-80px) scale(1);opacity:1;animation-timing-function:cubic-bezier(.55,0,.8,.6)}46%{transform:translateX(-24px) scale(1);opacity:1}50%{transform:translateX(-10px) scale(.7);opacity:0}100%{opacity:0;transform:translateX(-10px) scale(.7)}}
-@keyframes inr{0%{transform:translateX(86px) scale(.4);opacity:0;animation-timing-function:cubic-bezier(.3,1.5,.6,1)}10%{transform:translateX(80px) scale(1);opacity:1;animation-timing-function:cubic-bezier(.55,0,.8,.6)}46%{transform:translateX(24px) scale(1);opacity:1}50%{transform:translateX(10px) scale(.7);opacity:0}100%{opacity:0;transform:translateX(10px) scale(.7)}}
-@keyframes popc{0%,47%{opacity:0;transform:scale(.3)}47%{animation-timing-function:cubic-bezier(.3,1.6,.5,1)}58%{opacity:1;transform:scale(1.2)}66%{transform:scale(1.1)}88%{opacity:1;transform:scale(1.1);animation-timing-function:cubic-bezier(.5,0,.9,.5)}100%{opacity:0;transform:scale(.2)}}
-@keyframes puff{0%,45%{opacity:0;transform:scale(.4)}52%{opacity:.85;transform:scale(1.15)}68%,100%{opacity:0;transform:scale(1.7)}}
-.loader{position:relative;z-index:2;width:min(300px,82vw);margin-bottom:calc(8vh + env(safe-area-inset-bottom,0px))}
-.fence{position:relative;height:46px;display:flex;justify-content:space-between;align-items:flex-end}
-.fence .rail{position:absolute;left:0;height:9px;border-radius:3px;background:var(--wood-l);border:2px solid var(--wood-d);transition:width .3s}
-.fence .r1{top:12px}.fence .r2{top:28px}
-.fence i{position:relative;z-index:1;width:14px;height:46px;border-radius:4px 4px 2px 2px;background:var(--wood);border:2px solid var(--wood-d);transform:translateY(-60px) scaleY(.4);opacity:0;transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .2s}
-.fence i.on{transform:none;opacity:1}
-.status{margin-top:12px;text-align:center;font-weight:800;font-size:20px;color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,.35);min-height:30px}
-.status.ready{animation:breathe 1.3s ease-in-out infinite}
+.splash-top{position:relative;z-index:3;margin-top:calc(env(safe-area-inset-top,0px) + 3vh);text-align:center}
+.tagline{margin-top:10px;font-weight:800;font-size:16px;letter-spacing:.3px;color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,.3);opacity:.9}
+#splash .sun{top:32%;left:auto;right:10%;width:52px;height:52px}
+.skyfx{position:absolute;inset:0 0 45% 0;pointer-events:none;overflow:hidden}
+.skyfx i{position:absolute;opacity:0}
+body.t-night .skyfx i{width:90px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);transform:rotate(-24deg);animation:shoot 7s ease-in infinite}
+body.t-night .skyfx i:nth-child(1){left:8%;top:30%;animation-delay:1.2s}body.t-night .skyfx i:nth-child(2){left:40%;top:18%;animation-delay:4.4s}body.t-night .skyfx i:nth-child(3){left:62%;top:48%;animation-delay:6.1s}
+@keyframes shoot{0%,86%{opacity:0;transform:rotate(-24deg) translateX(0)}88%{opacity:1}100%{opacity:0;transform:rotate(-24deg) translateX(-160px)}}
+body:not(.t-night) .skyfx i::before,body:not(.t-night) .skyfx i::after{content:"";position:absolute;top:0;width:9px;height:5px;border-top:2px solid rgba(40,50,60,.55);border-radius:50% 50% 0 0}
+body:not(.t-night) .skyfx i::before{left:0;transform:rotate(12deg)}body:not(.t-night) .skyfx i::after{left:8px;transform:rotate(-12deg)}
+body:not(.t-night) .skyfx i{width:18px;height:8px;opacity:1;animation:glide 16s linear infinite}
+body:not(.t-night) .skyfx i:nth-child(1){top:38%;animation-delay:-2s}body:not(.t-night) .skyfx i:nth-child(2){top:44%;animation-delay:-2.6s;transform:scale(.8)}body:not(.t-night) .skyfx i:nth-child(3){top:30%;animation-delay:-9s}
+@keyframes glide{0%{left:-30px}100%{left:110%}}
+.sground{position:absolute;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom,0px) + 132px);background:var(--hill1);z-index:1}
+.sland{position:absolute;left:50%;transform:translateX(-50%);width:min(125%,640px);aspect-ratio:4/3;max-height:58vh;bottom:calc(env(safe-area-inset-bottom,0px) + 130px);z-index:1}
+.sland svg{position:absolute;inset:0;width:100%;height:100%}
+.sbarn .door{transition:transform .9s cubic-bezier(.3,1.3,.5,1)}
+.sbarn .dl{transform-box:fill-box;transform-origin:left center}.sbarn .dr{transform-box:fill-box;transform-origin:right center}
+.sbarn .glow{opacity:0;transition:opacity .6s}
+#splash.arrived .sbarn .dl{transform:scaleX(.12)}#splash.arrived .sbarn .dr{transform:scaleX(.12)}
+#splash.arrived .sbarn .glow{opacity:1;filter:drop-shadow(0 0 8px #FFC94A)}
+.walker{position:absolute;left:0;top:0;z-index:3;transform:translate(-50%,-92%);pointer-events:none;transition:opacity .5s}
+.walker .em{display:block;font-size:var(--ws,30px);line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.2));animation:waddle .42s ease-in-out infinite alternate;transform-origin:50% 100%}
+.walker.evolve .em{animation:evolve .5s cubic-bezier(.3,1.7,.5,1)}
+.walker .wpuff{position:absolute;left:50%;top:40%;font-size:40px;transform:translate(-50%,-50%) scale(.3);opacity:0;pointer-events:none}
+.walker.evolve .wpuff{animation:wpuff .55s ease-out}
+.walker.inside{opacity:0}
+@keyframes waddle{from{transform:rotate(-7deg) translateY(0)}to{transform:rotate(7deg) translateY(-3px)}}
+@keyframes evolve{0%{transform:scale(.3)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes wpuff{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}40%{opacity:.9;transform:translate(-50%,-50%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}}
+.steps{position:absolute;inset:0;z-index:2;pointer-events:none}
+.steps i{position:absolute;width:5px;height:4px;border-radius:50%;background:rgba(110,70,30,.55);transform:translate(-50%,-50%);animation:stepfade 2.6s linear forwards}
+@keyframes stepfade{0%{opacity:1}100%{opacity:0}}
+.loader{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);z-index:4;width:auto;margin:0 auto;max-width:340px;padding:0 20px;text-align:center}
+.tip{margin-top:8px;font-size:14px;font-weight:700;line-height:1.35;color:var(--cream);opacity:.85;text-shadow:0 1px 0 rgba(0,0,0,.35);min-height:38px}
+.status{display:inline-block;margin-top:0;border-radius:16px;padding:3px 16px 5px;background:rgba(0,0,0,.28);text-align:center;font-weight:800;font-size:20px;color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,.35);min-height:30px}
+.status.ready{animation:breathe 1.3s ease-in-out infinite;background:var(--barn);box-shadow:0 4px 0 var(--barn-d)}
 @keyframes breathe{50%{transform:scale(1.08)}}
 
 /* barn doors */
@@ -190,7 +206,7 @@ body.t-night .smoke circle{fill:rgba(200,210,235,.45)}
 .pet .em{display:block;font-size:var(--s);filter:drop-shadow(0 3px 0 rgba(0,0,0,.18));animation:bob 2.4s ease-in-out var(--dl) infinite}
 .pet::after{content:"";position:absolute;left:18%;right:18%;bottom:1px;height:6px;border-radius:50%;background:rgba(0,0,0,.18);z-index:-1}
 .pet.hop .em{animation:hop .55s cubic-bezier(.3,1.6,.5,1)}
-.pet.sleep .walk{animation:none}.pet.sleep .em{animation:breathe 3.4s ease-in-out infinite;transform-origin:50% 100%;filter:drop-shadow(0 3px 0 rgba(0,0,0,.18)) brightness(.88) saturate(.85)}
+.pet.sleep .walk{animation:none}.pet.sleep .em{animation:snooze 3.4s ease-in-out infinite;transform-origin:50% 100%;filter:drop-shadow(0 3px 0 rgba(0,0,0,.18)) brightness(.88) saturate(.85)}
 .pet .zz{position:absolute;right:-4px;top:-8px;font-style:normal;font-weight:800;font-size:12px;color:#DCE6FF;opacity:0;text-shadow:0 1px 0 rgba(0,0,0,.4);pointer-events:none}
 .pet.sleep .zz{animation:zz 2.6s ease-in-out infinite}
 .bubble{position:absolute;left:50%;bottom:100%;transform:translate(-50%,6px) scale(.6);opacity:0;white-space:nowrap;background:var(--cream);color:var(--ink);font-weight:800;font-size:13px;border-radius:12px;padding:3px 10px 4px;border:2px solid var(--wood-d);pointer-events:none;transition:all .25s cubic-bezier(.3,1.6,.5,1)}
@@ -204,7 +220,7 @@ body.t-night .smoke circle{fill:rgba(200,210,235,.45)}
 @keyframes walk{0%,100%{transform:translateX(0) scaleX(1)}46%{transform:translateX(var(--r)) scaleX(1)}50%{transform:translateX(var(--r)) scaleX(-1)}96%{transform:translateX(0) scaleX(-1)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes hop{40%{transform:translateY(-18px) scale(1.1,.95)}}
-@keyframes breathe{0%,100%{transform:rotate(-8deg) scale(1,.96)}50%{transform:rotate(-8deg) scale(1.03,1)}}
+@keyframes snooze{0%,100%{transform:rotate(-8deg) scale(1,.96)}50%{transform:rotate(-8deg) scale(1.03,1)}}
 @keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-18px)}}
 .pond{position:absolute;z-index:30;left:5%;bottom:10%;width:23%;aspect-ratio:2.4/1;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#9BDDF5,#4FA7D1 70%);box-shadow:inset 0 -4px 0 rgba(0,0,0,.12),0 2px 0 rgba(255,255,255,.4)}
 .pond .pet{left:50%;bottom:10%;--s:30px}
@@ -563,23 +579,51 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
 </section>
 
 <section class="screen" id="splash">
-  <div class="stars"></div><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
-  <div class="hills"><svg viewBox="0 0 400 300" preserveAspectRatio="none">
-    <path d="M0 120 C80 60 170 70 250 110 S360 90 400 70 V300 H0Z" fill="var(--hill2)"/>
-    <g transform="translate(342 80) scale(.58)">
-      <path d="M0 40 L38 8 L76 40 V86 H0Z" fill="#B83A30" stroke="#6E2019" stroke-width="3"/>
-      <path d="M-6 42 L38 4 L82 42" fill="none" stroke="#5B3A22" stroke-width="7" stroke-linecap="round"/>
-      <rect x="24" y="50" width="28" height="36" fill="#9E2F27" stroke="#FFF6E0" stroke-width="3"/>
-      <path d="M24 50 L52 86 M52 50 L24 86" stroke="#FFF6E0" stroke-width="3"/>
-      <circle cx="38" cy="30" r="6" fill="#FFF6E0"/>
-    </g>
-    <path d="M0 175 C100 130 220 150 300 170 S380 160 400 150 V300 H0Z" fill="var(--hill1)"/>
-  </svg></div>
-  <div class="splash-top"><div class="hang"><div class="sign wood nails"><h1>Sapan<br>Çiftliği</h1></div></div></div>
-  <div class="demo" aria-hidden="true"><span class="a">🐣</span><span class="b">🐣</span><span class="puff">💨</span><span class="c">🐭</span></div>
+  <div class="stars"></div><div class="skyfx" aria-hidden="true"><i></i><i></i><i></i></div><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+  <div class="splash-top">
+    <div class="hang"><div class="sign wood nails"><h1>Sapan<br>Çiftliği</h1></div></div>
+    <p class="tagline">Fırlat, birleştir, büyüt</p>
+  </div>
+  <div class="sground"></div>
+  <div class="sland" id="sland">
+    <svg id="sscene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <path d="M0 150 C60 108 130 100 200 126 S330 86 400 108 V300 H0Z" fill="var(--hill2)" opacity=".5"/>
+      <g transform="translate(84 96)">
+        <path d="M-7 58 L-3 6 H3 L7 58Z" fill="#EFE3CC" stroke="#8A6A45" stroke-width="1.5"/>
+        <path d="M-5 8 L0 -1 L5 8Z" fill="#B83A30"/>
+        <g class="blades"><path d="M0 4 L3 -22 L-1 -22Z M0 4 L26 7 L26 3Z M0 4 L-3 30 L1 30Z M0 4 L-26 1 L-26 5Z" fill="#FFF6E0" stroke="#8A6A45" stroke-width="1"/><circle cx="0" cy="4" r="2.5" fill="#6B4222"/></g>
+      </g>
+      <path d="M0 176 C80 146 170 150 250 166 S360 150 400 146 V300 H0Z" fill="var(--hill2)"/>
+      <g transform="translate(120 128)">
+        <rect x="40" y="-12" width="10" height="22" fill="#8C4A3A"/>
+        <g class="smoke"><circle cx="45" cy="-18" r="5"/><circle cx="45" cy="-18" r="5"/><circle cx="45" cy="-18" r="5"/></g>
+        <path d="M0 24 L30 0 L60 24 V56 H0Z" fill="#E9D7B4" stroke="#8A6A45" stroke-width="2.5"/>
+        <path d="M-5 26 L30 -3 L65 26" fill="none" stroke="#8C4A3A" stroke-width="6" stroke-linecap="round"/>
+        <rect class="win" x="8" y="30" width="14" height="12" rx="2"/><rect class="win" x="38" y="30" width="14" height="12" rx="2"/>
+      </g>
+      <path d="M0 214 C90 196 200 200 290 212 S370 206 400 202 V300 H0Z" fill="var(--hill1)"/>
+      <g class="sbarn" transform="translate(284 150)">
+        <path d="M0 38 L42 6 L84 38 V92 H0Z" fill="#B83A30" stroke="#6E2019" stroke-width="3"/>
+        <path d="M-6 40 L42 1 L90 40" fill="none" stroke="#5B3A22" stroke-width="7" stroke-linecap="round"/>
+        <circle class="win" cx="42" cy="27" r="6"/>
+        <rect x="25" y="52" width="34" height="40" fill="#3A2412"/>
+        <rect class="glow" x="25" y="52" width="34" height="40" fill="#FFD27A"/>
+        <g class="door dl"><rect x="25" y="52" width="17" height="40" fill="#9E2F27" stroke="#FFF6E0" stroke-width="2.5"/><path d="M25 52 L42 92 M42 52 L25 92" stroke="#FFF6E0" stroke-width="2.5"/></g>
+        <g class="door dr"><rect x="42" y="52" width="17" height="40" fill="#9E2F27" stroke="#FFF6E0" stroke-width="2.5"/><path d="M42 52 L59 92 M59 52 L42 92" stroke="#FFF6E0" stroke-width="2.5"/></g>
+      </g>
+      <path id="spath" d="M52 280 C96 262 110 236 160 236 S236 262 266 250 S304 238 326 242" fill="none" stroke="#C9A064" stroke-width="16" stroke-linecap="round" opacity=".9"/>
+      <path d="M52 280 C96 262 110 236 160 236 S236 262 266 250 S304 238 326 242" fill="none" stroke="#E4C48C" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 10" opacity=".8"/>
+      <g stroke="#8A5A34" stroke-width="3" stroke-linecap="round" opacity=".85">
+        <path d="M30 222 H118"/><path d="M30 213 H118"/><path d="M34 208 V230 M62 208 V230 M90 208 V230 M116 208 V230"/>
+      </g>
+      <g font-size="16"><text x="22" y="298">🌼</text><text x="186" y="292">🌷</text><text x="360" y="292">🌼</text></g>
+    </svg>
+    <div class="steps" id="steps"></div>
+    <div class="walker" id="walker"><span class="em">🐣</span><span class="wpuff">💨</span></div>
+  </div>
   <div class="loader">
-    <div class="fence" id="fence"><div class="rail r1" id="rail1" style="width:0"></div><div class="rail r2" id="rail2" style="width:0"></div></div>
-    <div class="status" id="status">Çitler çakılıyor…</div>
+    <div class="status" id="status">Civciv yola çıktı…</div>
+    <p class="tip" id="tip"></p>
   </div>
 </section>
 
@@ -1690,25 +1734,35 @@ $('share').onclick=async()=>{
 document.addEventListener('visibilitychange',()=>{last=performance.now();if(document.hidden)pauseGame()});
 
 /* ---------- splash / loading ---------- */
-const fence=$('fence'),POSTS=8;
-for(let i=0;i<POSTS;i++){const p=document.createElement('i');fence.appendChild(p)}
-const postEls=[...fence.querySelectorAll('i')];
 let prog=0,target=.12,ready=false;const t0=performance.now();
-function setProg(p){prog=p;const n=Math.round(p*POSTS);postEls.forEach((el,i)=>el.classList.toggle('on',i<n));
-  const w=Math.max(0,(n-1)/(POSTS-1))*100+'%';$('rail1').style.width=w;$('rail2').style.width=w}
-const lines=['Çitler çakılıyor…','Saman balyaları diziliyor…','Civcivler sayılıyor…','Sapan geriliyor…'];
-const demoPairs=[[0,1],[1,2],[2,3],[3,4],[4,5]];let dp=0;
-const demoEl=document.querySelector('.demo');
-demoEl.querySelector('.a').addEventListener('animationiteration',()=>{if(state!=='splash')return;dp=(dp+1)%(demoPairs.length+1);
-  const [a,c]=dp<demoPairs.length?demoPairs[dp]:[5,-1];
-  demoEl.querySelector('.a').textContent=LV[a].e;demoEl.querySelector('.b').textContent=LV[a].e;demoEl.querySelector('.c').textContent=c<0?'❓':LV[c].e});
+const WALK=[0,1,2,3,4],WLINE=['Civciv yola çıktı…','Puf! Fare oldu, hızlandı…','Tavşan zıp zıp…','Kedi ahırın kokusunu aldı…','Köpek son virajda!'];
+const TIPS=['İpucu: Sıradaki hayvana dokunursan yer değiştirirler.','İpucu: Samanlık eğimli, hayvanlar ağıla geri kayar.',
+  'İpucu: Arka arkaya birleştir, kombo x5\'e kadar çıkar.','İpucu: Tek boynuz dokunduğu hayvanı bir üst seviyeye taşır.',
+  'İpucu: Günün tarlasında herkes aynı hayvan sırasıyla oynar.','İpucu: Çiftlikteki hayvanlara dokun, seninle konuşurlar.',
+  'İpucu: Gece gelirsen hayvanlarını uyurken bulursun.'];
+$('tip').textContent=TIPS[Math.random()*TIPS.length|0];
+let wStage=-1,lastStep=0;
+function walkerAt(p){
+  const path=$('spath'),svg=$('sscene'),box=$('sland').getBoundingClientRect(),m=svg.getScreenCTM();if(!m)return null;
+  const pt=path.getPointAtLength(path.getTotalLength()*p),sp=svg.createSVGPoint();sp.x=pt.x;sp.y=pt.y;const q=sp.matrixTransform(m);
+  return {x:q.x-box.left,y:q.y-box.top}}
+function setProg(p){
+  prog=p;const w=$('walker'),pos=walkerAt(Math.min(.985,p*.985));if(!pos)return;
+  w.style.left=pos.x+'px';w.style.top=pos.y+'px';
+  const st=Math.min(WALK.length-1,Math.floor(p*WALK.length));
+  if(st!==wStage){const first=wStage<0;wStage=st;w.style.setProperty('--ws',(28+st*4)+'px');w.querySelector('.em').textContent=LV[WALK[st]].e;
+    if(!first){w.classList.remove('evolve');void w.offsetWidth;w.classList.add('evolve')}
+    if(!ready)$('status').textContent=WLINE[st]}
+  if(p-lastStep>.035&&p<.97){lastStep=p;const f=document.createElement('i');f.style.left=(pos.x-3)+'px';f.style.top=(pos.y+2)+'px';$('steps').appendChild(f);setTimeout(()=>f.remove(),2700)}
+}
 function splashTick(){
   if(state!=='splash')return;
-  const el=performance.now()-t0,minT=Math.min(1,el/2200);
+  const el=performance.now()-t0,minT=Math.min(1,el/3000);
   const goal=Math.min(target,Math.max(minT,.1)),nx=prog+(goal-prog)*.12+.002;
   setProg(Math.min(1,nx>goal?goal:nx));
-  if(!ready)$('status').textContent=lines[Math.min(lines.length-1,Math.floor(prog*lines.length))];
-  if(prog>=.999&&!ready){ready=true;const st=$('status');st.textContent='Başlamak için dokun';st.classList.add('ready')}
+  if(prog>=.999&&!ready){ready=true;const sp=$('splash');sp.classList.add('arrived');
+    setTimeout(()=>$('walker').classList.add('inside'),700);
+    const st=$('status');st.textContent='Başlamak için dokun';st.classList.add('ready')}
   requestAnimationFrame(splashTick);
 }
 requestAnimationFrame(splashTick);
