@@ -1,0 +1,12 @@
+{
+  "appId": "com.madexel.sapanciftligi",
+  "appName": "Sapan Çiftliği",
+  "webDir": "www",
+  "backgroundColor": "#2F5E27",
+  "ios": { "contentInset": "never", "backgroundColor": "#2F5E27" },
+  "android": { "backgroundColor": "#2F5E27" },
+  "plugins": {
+    "SplashScreen": { "launchShowDuration": 600, "backgroundColor": "#2F5E27", "showSpinner": false },
+    "StatusBar": { "overlaysWebView": true, "style": "LIGHT" }
+  }
+}

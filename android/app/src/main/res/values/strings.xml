@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sapan Çiftliği</string>
+    <string name="title_activity_main">Sapan Çiftliği</string>
+    <string name="package_name">com.madexel.sapanciftligi</string>
+    <string name="custom_url_scheme">com.madexel.sapanciftligi</string>
+    <!-- Play Console > Play Games Services > Yapılandırma: proje kimliği (sadece rakamlar). 0 iken Play Games kapalı kalır. -->
+    <string name="game_services_project_id" translatable="false">0</string>
+</resources>

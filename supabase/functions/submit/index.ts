@@ -4,7 +4,8 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { replay } from "./replay.js";
 
-const ORIGINS = ["https://madexel.github.io"];
+// web game + Capacitor apps (iOS: capacitor://localhost, Android: https://localhost)
+const ORIGINS = ["https://madexel.github.io", "capacitor://localhost", "https://localhost"];
 const MAX_BODY = 400_000;
 
 function cors(req: Request) {

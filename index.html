@@ -233,6 +233,7 @@ input{-webkit-user-select:text;user-select:text;touch-action:manipulation}
 .founder{display:block;font-size:12px;font-weight:800;color:#2F7A2F;margin-top:1px}
 #inviteBtn{margin:4px 0 6px}
 #inviteBtn[hidden],.btn[hidden]{display:none}
+.gsbtn{margin:4px 0 6px}
 .lbgap{text-align:center;color:#A58A62;font-weight:800;line-height:1}
 .lbmsg{padding:24px 10px;text-align:center;color:#7A5A36;font-weight:700;line-height:1.4}
 .rankline{display:block;margin:10px auto 0;border-radius:12px;padding:4px 14px 6px;background:#2F5E27;color:var(--cream);font-weight:800;font-size:15px}
@@ -356,6 +357,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <button class="x" data-close="book" aria-label="Kapat">×</button>
     <div class="tabs" id="bookTabs"><button data-t="animals" class="on">Hayvanlar</button><button data-t="ach">Başarımlar</button></div>
     <p class="sub" id="bookSub"></p>
+    <button class="btn plain small gsbtn" id="gsAchBtn" hidden></button>
     <div class="scroll"><div class="grid" id="grid"></div></div>
   </div>
 </section>
@@ -392,6 +394,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <div class="tabs" id="lbTabs"><button data-t="daily">Tarla</button><button data-t="friends">Arkadaşlar</button><button data-t="week">Hafta</button><button data-t="all">Tümü</button></div>
     <p class="sub" id="lbSub"></p>
     <button class="btn hay small" id="inviteBtn" hidden>Arkadaşını davet et</button>
+    <button class="btn plain small gsbtn" id="gsLbBtn" hidden></button>
     <div class="scroll"><div id="lbList"></div></div>
   </div>
 </section>
@@ -705,14 +708,56 @@ const sfx={
   coin:()=>{tone(988,0,.08,'square',.06);tone(1319,.07,.18,'square',.06)},
   creak:()=>{tone(90,0,.45,'sawtooth',.05,60);tone(130,.05,.4,'sawtooth',.03,95)},
   rooster:()=>{tone(620,0,.12,'sawtooth',.07,760);tone(760,.14,.16,'sawtooth',.07,900);tone(900,.32,.5,'sawtooth',.07,640)}};
-const vib=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+/* ---------- native (Capacitor iOS/Android) ---------- */
+const CAP=window.Capacitor,NATIVE=!!(CAP&&CAP.isNativePlatform&&CAP.isNativePlatform()),OS=NATIVE?CAP.getPlatform():'web';
+const NP=NATIVE&&CAP.Plugins||{},GS=NP.GameServices,ADM=NP.AdMob,HAP=NP.Haptics,SHARE=NP.Share;
+const WEB_URL='https://madexel.github.io/sapan-ciftligi/';
+/* MAĞAZA AYARLARI — hesaplar hazır olunca sadece burayı doldur (README: "Mağaza sürümü").
+   admob.rewarded : AdMob ödüllü reklam birimi kimlikleri. Şimdilik Google'ın test kimlikleri.
+   gs.ios         : App Store Connect'te Game Center için BİZİM seçtiğimiz kimlikler (aynen böyle oluştur).
+   gs.android     : Play Console'un ürettiği kimlikler (CgkI... ile başlar); oluşturunca buraya yapıştır. */
+const NCFG={
+  admob:{testing:true,rewarded:{ios:'ca-app-pub-3940256099942544/1712485313',android:'ca-app-pub-3940256099942544/5224354917'}},
+  gs:{ios:{lb:{normal:'sapan.rekor',daily:'sapan.gunun_tarlasi'},ach:id=>'sapan.ach.'+id},
+      android:{lb:{normal:'',daily:''},ach:{}}}};
+let gsOn=false,admReady=false,admLoaded=false;
+const gsLb=m=>OS==='ios'?NCFG.gs.ios.lb[m]:NCFG.gs.android.lb[m];
+const gsAch=id=>OS==='ios'?NCFG.gs.ios.ach(id):NCFG.gs.android.ach[id];
+async function gsSignIn(){if(!GS)return;
+  try{const r=await GS.signIn();gsOn=!!r.signedIn;
+    if(gsOn){for(const id in P.ach)gsUnlock(id);document.querySelectorAll('.gsbtn').forEach(b=>b.hidden=false)}}catch(e){}}
+function gsUnlock(id){if(!gsOn)return;const a=gsAch(id);if(a)GS.unlockAchievement({achievementId:a}).catch(()=>{})}
+function gsScore(m,sc){if(!gsOn)return;const l=gsLb(m);if(l)GS.submitScore({leaderboardId:l,score:sc}).catch(()=>{})}
+async function admInit(){if(!ADM)return;
+  try{await ADM.initialize({initializeForTesting:NCFG.admob.testing});
+    if(OS==='ios'){const st=await ADM.trackingAuthorizationStatus();if(st.status==='notDetermined')await ADM.requestTrackingAuthorization()}
+    const ci=await ADM.requestConsentInfo();if(ci.isConsentFormAvailable&&ci.status==='REQUIRED')await ADM.showConsentForm();
+    admReady=true;admPreload()}catch(e){}}
+async function admPreload(){if(!admReady||admLoaded)return;
+  try{await ADM.prepareRewardVideoAd({adId:NCFG.admob.rewarded[OS],isTesting:NCFG.admob.testing});admLoaded=true}catch(e){admLoaded=false}}
+// showRewardVideoAd only resolves on reward, so track reward/dismiss through events
+async function admShow(grant){
+  if(!admLoaded)await admPreload();
+  if(!admLoaded){toast('Şu an reklam yok, biraz sonra tekrar dene');return}
+  adOpen=true;const wasMuted=muted;muted=true;let got=false;
+  await new Promise(res=>{const hs=[];let fin=false;const done=()=>{if(fin)return;fin=true;hs.forEach(h=>h.remove());res()};
+    Promise.all([ADM.addListener('onRewardedVideoAdReward',()=>{got=true}),ADM.addListener('onRewardedVideoAdDismissed',done),
+      ADM.addListener('onRewardedVideoAdFailedToShow',done)]).then(a=>{hs.push(...a);ADM.showRewardVideoAd().catch(done)})});
+  admLoaded=false;muted=wasMuted;adOpen=false;
+  if(got)grant();else toast('Reklam yarıda kaldı, ödül verilmedi');
+  admPreload()}
+async function shareIt(title,text,url){
+  if(SHARE){try{await SHARE.share({title,text,url,dialogTitle:title});return true}catch(e){return false}}
+  if(navigator.share){try{await navigator.share({title,text,url});return true}catch(e){return false}}
+  try{await navigator.clipboard.writeText(text+'\n'+url);toast('Panoya kopyalandı')}catch(e){}return true}
+const vib=ms=>{try{if(HAP){HAP.impact({style:(Array.isArray(ms)||ms>30)?'MEDIUM':'LIGHT'});return}navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
 /* ---------- economy ---------- */
 function addEggs(n,why){if(n<=0)return;P.eggs+=n;save();refreshEggs(true);sfx.coin();if(why)toast(`${why} +${n} 🥚`)}
 function refreshEggs(pop){for(const id of ['mEggs']){const e=$(id);e.textContent='🥚 '+fmt(P.eggs);if(pop){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}}
   const s=$('sEggs');if(s)s.textContent=fmt(P.eggs)}
 function stat(){let owned=-3;for(const k in P.own)owned+=P.own[k].length;return Object.assign({},P.stats,{book:disc.size+(uniSeen?1:0),level:lvlOf(P.xp),owned})}
-function checkAch(){const s=stat();for(const a of ACH){if(!P.ach[a.id]&&a.ok(s)){P.ach[a.id]=1;save();addEggs(a.r,`Başarım: ${a.i} ${a.t}`);
+function checkAch(){const s=stat();for(const a of ACH){if(!P.ach[a.id]&&a.ok(s)){P.ach[a.id]=1;save();gsUnlock(a.id);addEggs(a.r,`Başarım: ${a.i} ${a.t}`);
   for(const k in SHOP)for(const id in SHOP[k])if(SHOP[k][id].ach===a.id){P.own[k].includes(id)||P.own[k].push(id);save();toast(`Özel ödül açıldı: ${SHOP[k][id].n}! Pazarda seni bekliyor.`)}}}}
 function ensureQuests(){if(P.quests&&P.quests.date===TODAY)return;const r=mulberry(seedOf('q'+TODAY)),pool=[...QPOOL],list=[];
   while(list.length<3){const i=Math.floor(r()*pool.length);list.push({id:pool[i].id,prog:0,done:false,cl:false});pool.splice(i,1)}
@@ -737,6 +782,7 @@ if(CONFIG.adsClient){const s=document.createElement('script');s.async=true;s.cro
 let adOpen=false;
 function rewarded(name,grant){
   if(P.premium){grant();toast('Çiftlik Sahibi: reklamsız ödül 👑');return}
+  if(ADM){admShow(grant);return}
   if(CONFIG.adsClient&&window.adBreak){let got=false;adOpen=true;
     adBreak({type:'reward',name,beforeAd:()=>{muted_tmp=muted;muted=true},afterAd:()=>{muted=muted_tmp},
       beforeReward:show=>show(),adDismissed:()=>{},adViewed:()=>{got=true},
@@ -789,6 +835,7 @@ async function submitScore(){
   try{
     const res=await submitRun({session:sess.id,device:P.dev,name:P.nick,score,merges,events:LOG});sess=null;
     {const rk=Math.min(res.daily||9999,res.week||9999,res.all||9999);if(rk<P.stats.bestRank){P.stats.bestRank=rk;checkAch()}}
+    gsScore(mode==='daily'?'daily':'normal',score); // only server-verified scores reach the platform boards
     if(mode==='daily')P.lb.daily=Math.max(P.lb.daily,score);else{P.lb.week=Math.max(P.lb.week,score);P.lb.all=Math.max(P.lb.all,score)}
     save();
     const parts=[];if(res.daily)parts.push(`Günün tarlası #${res.daily}`);if(res.week)parts.push(`Hafta #${res.week}`);if(res.all)parts.push(`Genel #${res.all}`);
@@ -802,12 +849,11 @@ let lbTab='week';
 async function ensureCode(){
   if(P.code)return P.code;
   const r=await rpc('my_code',{p_device:P.dev,p_name:P.nick});P.code=r.code;P.founder=r.founder;save();return P.code}
-const inviteUrl=code=>location.origin+location.pathname+'?davet='+code;
+const inviteUrl=code=>WEB_URL+'?davet='+code;
 async function invite(){
   let code;try{code=await ensureCode()}catch(e){toast('Davet için internet bağlantısı gerekiyor');return}
   const txt=`Sapan Çiftliği'nde günün tarlasında yarışalım! Bu bağlantıyla gel, arkadaş tablomuzda karşılaşalım 🐣`;
-  try{if(navigator.share){await navigator.share({title:'Sapan Çiftliği',text:txt,url:inviteUrl(code)});return}
-    await navigator.clipboard.writeText(txt+'\n'+inviteUrl(code));toast('Davet bağlantısı kopyalandı')}catch(e){}}
+  await shareIt('Sapan Çiftliği',txt,inviteUrl(code))}
 $('inviteBtn').onclick=invite;
 async function acceptInvite(){
   const code=P.pendingInvite;if(!code)return;
@@ -860,6 +906,14 @@ async function saveNick(){const v=$('nickIn').value.trim().replace(/\s+/g,' ');
   catch(e){toast(/uygunsuz/.test(e.message)?'Bu ad kullanılamaz, başka bir ad dene':/gecersiz/.test(e.message)?'Sadece harf, rakam ve boşluk kullan':'Kaydedilemedi, bağlantını kontrol et')}}
 $('nickSave').onclick=saveNick;$('nickIn').addEventListener('keydown',e=>{if(e.key==='Enter')saveNick()});
 
+if(NATIVE){
+  const nm=OS==='ios'?'Game Center':'Play Games';
+  $('gsLbBtn').textContent=OS==='ios'?"Game Center'da aç":"Play Games'te aç";$('gsAchBtn').textContent=`${nm} başarımları`;
+  $('gsLbBtn').onclick=()=>GS.showLeaderboard({leaderboardId:gsLb(lbTab==='daily'||lbTab==='friends'?'daily':'normal')||undefined}).catch(()=>{});
+  $('gsAchBtn').onclick=()=>GS.showAchievements().catch(()=>{});
+  // web payments (Stripe, tip link) are not allowed for digital goods inside store apps; IAP comes later
+  const pt=document.querySelector('#shopTabs [data-t=prem]');if(pt)pt.remove();
+}
 /* ---------- premium ---------- */
 function grantPremium(){if(P.premium)return;P.premium=true;
   for(const k of ['theme','sling','trail'])if(!P.own[k].includes('altin'))P.own[k].push('altin');
@@ -1348,7 +1402,7 @@ function buy(kind,id){
   const it=SHOP[kind][id];
   if(!P.own[kind].includes(id)){
     const lk=lockOf(kind,id),pr=priceOf(kind,id);
-    if(lk==='prem'){shopTab='prem';renderShop();return}
+    if(lk==='prem'){if(NATIVE){toast('Çiftlik Sahibi paketi yakında uygulama içi satın almayla gelecek');return}shopTab='prem';renderShop();return}
     if(lk==='ach'){const a=ACH.find(x=>x.id===it.ach);toast(`${a.i} "${a.t}" başarımını aç: ${a.d.toLowerCase()}`);return}
     if(lk==='lvl'){toast(`Seviye ${it.lvl} olunca açılır. Oynadıkça seviye atlarsın.`);return}
     if(P.eggs<pr){toast(`${pr-P.eggs} 🥚 daha lazım. Görevler ve günün tarlası iyi kazandırır!`);return}
@@ -1430,13 +1484,12 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{sfx.click();
 const toggleMute=()=>{muted=!muted;store.set('muted',muted?'1':'0');setMute();ensureAudio();sfx.click()};
 $('muteBtn').onclick=toggleMute;$('muteBtn2').onclick=toggleMute;
 $('share').onclick=async()=>{
-  let url=location.origin+location.pathname,txt;
+  let url=WEB_URL,txt;
   if(mode==='daily'){const row=LV.map((l,i)=>i<=maxLv?l.e:'⬛').join('');
     txt=`Sapan Çiftliği, Günün Tarlası #${DAYNO} (${TODAY_MOD.n})\n${row}\n${fmt(score)} puan. Geçebilir misin?`;
     try{url=inviteUrl(await ensureCode())}catch(e){}}
   else txt=`Sapan Çiftliği'nde ${fmt(score)} puan yaptım, en büyük hayvanım ${LV[maxLv].e} ${LV[maxLv].n}! Geçebilir misin?`;
-  try{if(navigator.share){await navigator.share({title:'Sapan Çiftliği',text:txt,url});return}
-    await navigator.clipboard.writeText(txt+'\n'+url);toast('Sonuç panoya kopyalandı')}catch(e){}};
+  await shareIt('Sapan Çiftliği',txt,url)};
 document.addEventListener('visibilitychange',()=>{last=performance.now();if(document.hidden)pauseGame()});
 
 /* ---------- splash / loading ---------- */
@@ -1474,6 +1527,7 @@ $('splash').addEventListener('click',()=>{
   setTimeout(()=>{show('splash',false);toMenu();resize(true);
     setTimeout(()=>{d.classList.remove('shut');sfx.rooster();
       if(P.pendingInvite)setTimeout(acceptInvite,600);
+      if(NATIVE){gsSignIn();setTimeout(admInit,1500)}
       if(canDaily())setTimeout(()=>{if(state==='menu'){renderQuests();show('quests',true)}},900)},250)},520);
 });
 
@@ -1485,7 +1539,7 @@ if(window.visualViewport)visualViewport.addEventListener('resize',()=>resize());
 window.addEventListener('orientationchange',()=>setTimeout(()=>resize(),200));
 if(/debug/.test(location.search))window.__sapan={dbg:()=>({LOG,score,merges,sess,state,usedSecond}),forceEnd:()=>endRun(),revive:()=>revive(),P,endRun:()=>{score=1234;maxLv=4;merges=17;launched=40;endRun()},add:n=>addEggs(n),state:()=>state};
 ensureQuests();initAmb();setMute();renderStrip();refreshMenu();boot();requestAnimationFrame(frame);
-if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(!NATIVE&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>
 </body>
