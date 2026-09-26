@@ -878,7 +878,6 @@ async function renderLB(){
         :`<div class="lbmsg">Henüz kimse yok. İlk sen ol!<br>İlk 1000 oyuncu kalıcı 🌱 Kurucu çiftçi rozeti alır.<br><button class="btn red small" id="lbGo">${isDaily?'Günün tarlasını oyna':'Hemen oyna'}</button></div>`;
       const g=$('lbGo');if(g)g.onclick=()=>startGame(isDaily?'daily':'normal');return}
     const total=rows[0].total;
-    $('lbSub').textContent+=` ${fmt(total)} çiftçi ${tab==='friends'?'yarışıyor.':tab==='all'?'var.':'yarışıyor.'}`;
     let html='',prev=0;
     for(const r of rows){if(r.rnk>prev+1&&prev)html+='<div class="lbgap">⋮</div>';prev=r.rnk;
       html+=`<div class="lbrow${r.me?' me':''}"><span class="rk">${medal(r.rnk)}</span><span class="nm"></span><span class="an">${LV[r.max_lv].e}</span><b>${fmt(r.score)}</b></div>`}
