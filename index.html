@@ -572,7 +572,10 @@ document.querySelector('meta[name=theme-color]').content=TODINFO.meta;
 let scale=1,dpr=1,tokens=[],uniTok=null,bg=null,fg=null;
 let bodies=[],pending=[],parts=[],floats=[],amb=[];
 let state='splash',mode='normal',score=0,best=+store.get('best',0),maxLv=0,shots=0,launched=0,merges=0,lastUni=false;
-let cur=null,next=null,loadT=0,aiming=false,down=null,pull=null,demoT=1,rand=Math.random,mod=null;
+let cur=null,next=null,loadT=0,aiming=false,down=null,pull=null,demoT=1,rand=Math.random,rand2=Math.random,mod=null;
+/* anti-cheat: every ranked game uses a server seed and records an event log the server replays */
+let gameT=0,LOG=[],mergeMax=0,queued=null,sess=null,ranked=false;
+const tt=()=>Math.round(gameT*100)/100;
 let combo=0,lastMerge=-9,time=0,shake=0,dangerMax=0,idc=0,lastTick=0,lastBump=0,usedSecond=false,freeSwap=true,lastEarn=0;
 let disc=new Set(JSON.parse(store.get('disc','[0]')));let uniSeen=store.get('uni','0')==='1';
 let muted=store.get('muted','0')==='1',tutDone=store.get('tut','0')==='1',freshSlot=-1;
@@ -730,13 +733,25 @@ async function rpc(fn,args){
       headers:{apikey:LB.key,'Content-Type':'application/json'},body:JSON.stringify(args)});
     const j=await r.json().catch(()=>null);if(!r.ok)throw new Error(j&&j.message||'hata');return j}
   finally{clearTimeout(t)}}
+const sessQ={normal:null,daily:null};
+async function prefetch(m){
+  if(sessQ[m]&&Date.now()-sessQ[m].at<2*3600e3)return;
+  try{const r=await rpc('start_session',{p_device:P.dev,p_mode:m,p_day:TODAY});sessQ[m]={id:r.id,seed:Number(r.seed),day:r.day,at:Date.now()}}catch(e){}
+}
+const LB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnZ21jeWdmbm5kZ2pybWhmZmJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0NDI4OTYsImV4cCI6MjEwNjAxODg5Nn0.iBltpkxKUyru-ofkiF-PxnqX5aoWnVul43znW2bjSjQ';
+async function submitRun(body){
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),12000);
+  try{const r=await fetch(`${LB.url}/functions/v1/submit`,{method:'POST',signal:ctl.signal,
+      headers:{'Content-Type':'application/json',apikey:LB_ANON,Authorization:'Bearer '+LB_ANON},body:JSON.stringify(body)});
+    const j=await r.json().catch(()=>null);if(!r.ok)throw new Error(j&&j.error||'hata');return j}
+  finally{clearTimeout(t)}}
 async function submitScore(){
-  if(score<=0)return;
+  if(score<=0||!ranked||!sess)return;
   if(P.lb.wk!==WEEK){P.lb.wk=WEEK;P.lb.week=0}if(P.lb.dd!==TODAY){P.lb.dd=TODAY;P.lb.daily=0}
   const better=mode==='daily'?score>P.lb.daily:(score>P.lb.week||score>P.lb.all);
   if(!better)return;
   try{
-    const res=await rpc('submit_score',{p_device:P.dev,p_name:P.nick,p_score:score,p_max_lv:maxLv,p_merges:merges,p_mode:mode,p_day:TODAY});
+    const res=await submitRun({session:sess.id,device:P.dev,name:P.nick,score,merges,events:LOG});sess=null;
     if(mode==='daily')P.lb.daily=Math.max(P.lb.daily,score);else{P.lb.week=Math.max(P.lb.week,score);P.lb.all=Math.max(P.lb.all,score)}
     save();
     const parts=[];if(res.daily)parts.push(`Günün tarlası #${res.daily}`);if(res.week)parts.push(`Hafta #${res.week}`);if(res.all)parts.push(`Genel #${res.all}`);
@@ -785,29 +800,34 @@ if(qs.get('premium')==='ok'){grantPremium();history.replaceState(null,'',locatio
 /* ---------- game logic ---------- */
 function mk(lv,x,y,uni=false){const l=uni?UNI:LV[lv];
   return {id:idc++,lv,uni,x,y,vx:0,vy:0,r:l.r,age:0,pop:uni?1:0,sq:0,sqa:0,danger:0,dead:false,trail:false}}
+// must stay identical to makePicker() in supabase/functions/submit/replay.js
 function pick(){
-  shots++;
+  const u1=rand(),u2=rand();shots++;
   const uP=mod&&mod.uni||.055,minS=mod&&mod.uni?4:12;
-  if(shots>minS&&!lastUni&&rand()<uP){lastUni=true;return {uni:true,lv:-1}}
+  if(shots>minS&&!lastUni&&u1<uP){lastUni=true;return {uni:true,lv:-1}}
   lastUni=false;
-  const cap=Math.max(1,Math.min(4,maxLv-1)),w=[6,5,3,2,1].slice(0,cap+1),tot=w.reduce((a,b)=>a+b);
-  let r=rand()*tot;for(let i=0;i<w.length;i++){if((r-=w[i])<0)return {uni:false,lv:i}}return {uni:false,lv:0}}
+  const cap=Math.max(1,Math.min(4,mergeMax-1)),w=[6,5,3,2,1].slice(0,cap+1),tot=w.reduce((a,b)=>a+b,0);
+  let r=u2*tot;for(let i=0;i<w.length;i++){if((r-=w[i])<0)return {uni:false,lv:i}}return {uni:false,lv:0}}
 function setMode(m){
-  mode=m;mod=m==='daily'?TODAY_MOD:null;rand=m==='daily'?mulberry(seedOf('d'+TODAY)):Math.random;
+  const day=sess&&sess.day||TODAY;mode=m;mod=m==='daily'?MODS[seedOf('m'+day)%MODS.length]:null;
+  const sd=m==='daily'?seedOf('d'+day):sess?Number(sess.seed)>>>0:(Math.random()*4294967296)>>>0;
+  rand=mulberry(sd);rand2=mulberry((sd^0x9E3779B9)>>>0);
   damp=mod&&mod.damp||1.35;coul=mod&&mod.coul||45;maxSpeed=MAXSPEED*(mod&&mod.power||1);windX=0;
 }
 function reset(){
   bodies=[];pending=[];parts=[];floats=[];score=0;maxLv=0;shots=0;launched=0;merges=0;lastUni=false;combo=0;dangerMax=0;shake=0;
-  usedSecond=false;freeSwap=true;shownScore=-1;
-  if(mod&&mod.start){let tries=0;while(bodies.length<mod.start&&tries++<200){const lv=Math.floor(rand()*4),r=LV[lv].r;
-    const b=mk(lv,F+r+rand()*(W-2*F-2*r),F+r+rand()*(DANGER_Y-190-r));b.pop=1;b.age=2;
+  usedSecond=false;freeSwap=true;shownScore=-1;mergeMax=0;lastMerge=-9;gameT=0;LOG=[];queued=null;
+  if(mod&&mod.start){let tries=0;while(bodies.length<mod.start&&tries++<200){const lv=Math.floor(rand2()*4),r=LV[lv].r;
+    const b=mk(lv,F+r+rand2()*(W-2*F-2*r),F+r+rand2()*(DANGER_Y-190-r));b.pop=1;b.age=2;
     if(bodies.every(o=>Math.hypot(o.x-b.x,o.y-b.y)>o.r+b.r+4&&o.lv!==b.lv||Math.hypot(o.x-b.x,o.y-b.y)>o.r+b.r+40))bodies.push(b)}}
   cur=pick();next=pick();loadT=0;aiming=false;pull=null;updHud(true);updSwap();
 }
 function show(id,on){$(id).hidden=!on}
-function startGame(m){ensureAudio();sfx.click();setMode(m||'normal');reset();state='play';document.body.classList.remove('chrome-off');
+function startGame(m){ensureAudio();sfx.click();m=m||'normal';
+  sess=sessQ[m]&&Date.now()-sessQ[m].at<2*3600e3?sessQ[m]:null;sessQ[m]=null;ranked=!!sess;setTimeout(()=>prefetch(m),2500);
+  setMode(m);reset();state='play';document.body.classList.remove('chrome-off');
   ['menu','over','pause','book','second','shop','quests','lb'].forEach(i=>show(i,false));placeTut();
-  const tag=$('modeTag');tag.hidden=mode!=='daily';tag.textContent=mod?`Günün tarlası: ${mod.n}`:'';
+  const tag=$('modeTag');tag.hidden=mode!=='daily'&&ranked;tag.textContent=(mod?`Günün tarlası: ${mod.n}`:'')+(ranked?'':(mod?'. ':'')+'Sıralamasız oyun (bağlantı yok)');
   if(mode==='daily')toast(`Günün tarlası #${DAYNO}: ${mod.n}. ${mod.d}.`);
   else if(!P.tips.swap&&tutDone){P.tips.swap=1;save();toast('İpucu: sıradaki hayvana dokunursan yer değiştirirler. İlki her oyunda bedava.')}}
 function toMenu(){state='menu';setMode('normal');document.body.classList.add('chrome-off');bodies=[];parts=[];floats=[];cur=null;demoT=.4;
@@ -816,7 +836,7 @@ function refreshMenu(){$('greet').textContent=TODINFO.greet;$('mBest').textConte
   {const L=lvlOf(P.xp),a=xpAt(L),b=xpAt(L+1);$('mLvl').textContent='Sv. '+L;$('mLvlBar').style.width=(L>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
   $('mDisc').textContent=(disc.size+(uniSeen?1:0))+'/12';$('dNo').textContent=DAYNO;
   $('dMod').textContent=P.daily.date===TODAY?`${TODAY_MOD.n}. Bugünkü en iyin: ${fmt(P.daily.best)}`:`Bugün: ${TODAY_MOD.n}. Herkes aynı tarlada!`;
-  refreshEggs();badge()}
+  refreshEggs();badge();prefetch('normal');setTimeout(()=>prefetch('daily'),2300)}
 function endRun(){
   state='over';aiming=false;pull=null;sfx.over();vib([60,40,60]);placeTut();
   if(!usedSecond&&bodies.length>2)setTimeout(showSecond,550);else setTimeout(finish,650);
@@ -833,8 +853,9 @@ function showSecond(){
 }
 function revive(){show('second',false);usedSecond=true;
   for(const b of bodies)if(b.y>H*.45){b.dead=true;burst(b.x,b.y,[b.uni?UNI.c:LV[b.lv].c,'#FFF8E7'],10,180)}
+  LOG.push(['r',tt(),bodies.filter(b=>b.dead).map(b=>b.uni?-1:b.lv)]);
   bodies=bodies.filter(b=>!b.dead);for(const b of bodies)b.danger=0;dangerMax=0;
-  state='play';sfx.magic();toast('İkinci şans! Ağıl ferahladı.');if(!cur){cur=next;next=pick();updHud(true)}}
+  state='play';sfx.magic();toast('İkinci şans! Ağıl ferahladı.');if(!cur&&queued){cur=queued;queued=null;updHud(true)}}
 $('scAd').onclick=()=>rewarded('ikinci-sans',revive);
 $('scEgg').onclick=()=>{if(P.eggs<40)return;P.eggs-=40;save();refreshEggs();revive()};
 $('scNo').onclick=()=>{show('second',false);finish()};
@@ -870,7 +891,7 @@ function countUp(el,to){const t0=performance.now(),d=Math.min(1400,400+to/4);
   const step=n=>{const k=Math.min(1,(n-t0)/d),e=1-Math.pow(1-k,3);el.textContent=fmt(to*e);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
 function gain(v,x,y,label){
   if(!live())return;
-  combo=time-lastMerge<1.3?combo+1:1;lastMerge=time;
+  const t=tt();combo=t-lastMerge<1.3?combo+1:1;lastMerge=t;
   const mult=Math.min(combo,5),pts=v*mult;score+=pts;
   floats.push({x,y,t:0,txt:'+'+pts,big:false});
   if(mult>1){floats.push({x:W/2,y:H*.42,t:0,txt:`Kombo x${mult}!`,big:true,huge:true});qev('combo',mult);
@@ -888,14 +909,14 @@ function discover(lv){
 }
 function clampIn(b){b.x=Math.min(W-F-b.r,Math.max(F+b.r,b.x));b.y=Math.min(H-F-b.r,Math.max(F+b.r,b.y))}
 function merge(a,b){
-  a.dead=b.dead=true;
+  a.dead=b.dead=true;if(live())LOG.push(['m',tt(),a.lv]);
   if(a.lv===TOP){legend((a.x+b.x)/2,(a.y+b.y)/2);return}
   const ma=a.r*a.r,mb=b.r*b.r,M=ma+mb,nl=a.lv+1;
   const n=mk(nl,(a.x*ma+b.x*mb)/M,(a.y*ma+b.y*mb)/M);
   n.vx=(a.vx*ma+b.vx*mb)/M*.55;n.vy=(a.vy*ma+b.vy*mb)/M*.55;n.age=Math.max(a.age,b.age,1);
   clampIn(n);pending.push(n);
   burst(n.x,n.y,[LV[nl].c,'#FFF8E7',LV[a.lv].c],12+nl*3,120+nl*20);
-  if(live()){merges++;P.stats.merges++;if(nl>P.stats.madeMax){P.stats.madeMax=nl;checkAch()}else if(P.stats.merges===1)checkAch();
+  if(live()){merges++;if(nl>mergeMax)mergeMax=nl;P.stats.merges++;if(nl>P.stats.madeMax){P.stats.madeMax=nl;checkAch()}else if(P.stats.merges===1)checkAch();
     qev('make',nl);qev('merge');sfx.merge(nl);vib(10+nl*3);gain(LV[nl].v,n.x,n.y);discover(nl);if(nl>=8)shake=Math.max(shake,.25)}
 }
 function legend(x,y){
@@ -907,17 +928,18 @@ function legend(x,y){
 }
 function upgrade(o,u){
   burst(u.x,u.y,['#FF9ECF','#B89CFF','#8FE3FF','#FFF3A6'],28,220);
-  if(!live())return;sfx.magic();vib(25);qev('uni');
-  if(o.lv<TOP){o.lv++;o.r=LV[o.lv].r;o.pop=.2;clampIn(o);gain(LV[o.lv].v,o.x,o.y,'Sihir!');discover(o.lv)}
+  if(!live())return;LOG.push(['u',tt(),o.lv]);sfx.magic();vib(25);qev('uni');
+  if(o.lv<TOP){o.lv++;if(o.lv>mergeMax)mergeMax=o.lv;o.r=LV[o.lv].r;o.pop=.2;clampIn(o);gain(LV[o.lv].v,o.x,o.y,'Sihir!');discover(o.lv)}
   else gain(1024,o.x,o.y,'Sihir!');
 }
 function launch(){
+  LOG.push(['s',tt(),cur.uni?-1:cur.lv]);
   const sp=pull.power*maxSpeed,b=mk(cur.lv,SL.x,SL.y,cur.uni);
   b.vx=pull.ux*sp;b.vy=pull.uy*sp;b.pop=1;b.trail=!!TR.k;pending.push(b);launched++;qev('shot');
   sfx.launch(pull.power);vib(8);
   if(cur.uni&&!uniSeen){uniSeen=true;store.set('uni','1');toast('🦄 Tek boynuz dokunduğu hayvanı bir üst seviyeye taşır!');checkAch()}
   if(!tutDone){tutDone=true;store.set('tut','1');placeTut()}
-  cur=null;loadT=.32;
+  queued=next;next=pick();cur=null;loadT=.32;updHud(true);
 }
 function burst(x,y,cols,n,spd){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=spd*(.3+Math.random()*.7);
   parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:0,max:.5+Math.random()*.5,c:cols[i%cols.length],s:2+Math.random()*4})}}
@@ -926,7 +948,7 @@ function updSwap(){const n=$('next');let t=n.querySelector('.swap');if(!t){t=doc
 $('next').onclick=()=>{
   if(state!=='play'||!cur||!next)return;
   if(!freeSwap){if(P.eggs<10){toast('Değiştirmek için 10 🥚 gerek');return}P.eggs-=10;save()}
-  freeSwap=false;[cur,next]=[next,cur];sfx.click();vib(8);updHud(true);updSwap()};
+  freeSwap=false;LOG.push(['w',tt()]);[cur,next]=[next,cur];sfx.click();vib(8);updHud(true);updSwap()};
 
 function physics(dt){
   const N=4,h=dt/N;
@@ -973,7 +995,7 @@ function update(dt){
     if(mod&&mod.wind)windX=mod.wind*Math.sin(time*.4);
     physics(dt);
     if(state==='menu')demo(dt);
-    if(state==='play'&&!cur){loadT-=dt;if(loadT<=0){cur=next;next=pick();if(!cur.uni)discover(cur.lv);updHud(true)}}
+    if(state==='play'){gameT+=dt;if(!cur&&queued){loadT-=dt;if(loadT<=0){cur=queued;queued=null;if(!cur.uni)discover(cur.lv);updHud(true)}}}
     dangerMax=0;
     for(const b of bodies){b.age+=dt;
       if(b.trail)trailTick(b,dt);
@@ -1388,7 +1410,7 @@ function frame(now){const dt=Math.min(1/30,(now-last)/1000);last=now;if(!documen
 window.addEventListener('resize',()=>resize());if(window.ResizeObserver)new ResizeObserver(()=>resize()).observe(stage);
 if(window.visualViewport)visualViewport.addEventListener('resize',()=>resize());
 window.addEventListener('orientationchange',()=>setTimeout(()=>resize(),200));
-if(/debug/.test(location.search))window.__sapan={P,endRun:()=>{score=1234;maxLv=4;merges=17;launched=40;endRun()},add:n=>addEggs(n),state:()=>state};
+if(/debug/.test(location.search))window.__sapan={dbg:()=>({LOG,score,merges,sess,state,usedSecond}),forceEnd:()=>endRun(),revive:()=>revive(),P,endRun:()=>{score=1234;maxLv=4;merges=17;launched=40;endRun()},add:n=>addEggs(n),state:()=>state};
 ensureQuests();initAmb();setMute();renderStrip();refreshMenu();boot();requestAnimationFrame(frame);
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
