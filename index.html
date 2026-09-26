@@ -228,6 +228,11 @@ input{-webkit-user-select:text;user-select:text;touch-action:manipulation}
 .lbrow .nm{flex:1;min-width:0;font-weight:800;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lbrow .an{font-size:20px}
 .lbrow b{font-size:16px;font-variant-numeric:tabular-nums;min-width:64px;text-align:right}
+.lbrow .nm small{font-size:11px;font-weight:800;border-radius:6px;padding:0 5px 1px;margin-left:5px;vertical-align:2px;background:#6B4FA8;color:#fff}
+.lbrow .fd{font-size:13px;margin-right:2px}
+.founder{display:block;font-size:12px;font-weight:800;color:#2F7A2F;margin-top:1px}
+#inviteBtn{margin:4px 0 6px}
+#inviteBtn[hidden],.btn[hidden]{display:none}
 .lbgap{text-align:center;color:#A58A62;font-weight:800;line-height:1}
 .lbmsg{padding:24px 10px;text-align:center;color:#7A5A36;font-weight:700;line-height:1.4}
 .rankline{display:block;margin:10px auto 0;border-radius:12px;padding:4px 14px 6px;background:#2F5E27;color:var(--cream);font-weight:800;font-size:15px}
@@ -384,8 +389,9 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <button class="x" data-close="lb" aria-label="Kapat">×</button>
     <div class="nickrow" id="nickRow"><span>Çiftlik adın</span><b id="nick"></b><button class="price own" id="nickEdit">Değiştir</button></div>
     <div class="nickrow" id="nickForm" hidden><input id="nickIn" maxlength="16" autocomplete="off" enterkeyhint="done" aria-label="Çiftlik adı"><button class="price" id="nickSave">Kaydet</button></div>
-    <div class="tabs" id="lbTabs"><button data-t="daily">Günün tarlası</button><button data-t="week">Bu hafta</button><button data-t="all">Tümü</button></div>
+    <div class="tabs" id="lbTabs"><button data-t="daily">Tarla</button><button data-t="friends">Arkadaşlar</button><button data-t="week">Hafta</button><button data-t="all">Tümü</button></div>
     <p class="sub" id="lbSub"></p>
+    <button class="btn hay small" id="inviteBtn" hidden>Arkadaşını davet et</button>
     <div class="scroll"><div id="lbList"></div></div>
   </div>
 </section>
@@ -792,23 +798,55 @@ async function submitScore(){
   }catch(e){/* offline or rate-limited: the local game is unaffected */}
 }
 let lbTab='week';
+// invite code + founder number (creates the player row on first use)
+async function ensureCode(){
+  if(P.code)return P.code;
+  const r=await rpc('my_code',{p_device:P.dev,p_name:P.nick});P.code=r.code;P.founder=r.founder;save();return P.code}
+const inviteUrl=code=>location.origin+location.pathname+'?davet='+code;
+async function invite(){
+  let code;try{code=await ensureCode()}catch(e){toast('Davet için internet bağlantısı gerekiyor');return}
+  const txt=`Sapan Çiftliği'nde günün tarlasında yarışalım! Bu bağlantıyla gel, arkadaş tablomuzda karşılaşalım 🐣`;
+  try{if(navigator.share){await navigator.share({title:'Sapan Çiftliği',text:txt,url:inviteUrl(code)});return}
+    await navigator.clipboard.writeText(txt+'\n'+inviteUrl(code));toast('Davet bağlantısı kopyalandı')}catch(e){}}
+$('inviteBtn').onclick=invite;
+async function acceptInvite(){
+  const code=P.pendingInvite;if(!code)return;
+  try{const name=await rpc('add_friend',{p_device:P.dev,p_name:P.nick,p_code:code});P.pendingInvite=null;save();
+    toast(`${name} ile arkadaş oldunuz! Günün tarlasında karşılaşacaksınız.`);lbTab='friends'}
+  catch(e){if(/kendi/.test(e.message)||/bulunamadi/.test(e.message)){P.pendingInvite=null;save()}}}
 const medal=r=>r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
 async function renderLB(){
   document.querySelectorAll('#lbTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===lbTab));
   $('nick').textContent=P.nick;
-  $('lbSub').textContent=lbTab==='daily'?`Günün tarlası #${DAYNO}: ${TODAY_MOD.n}. Herkes aynı tarlada.`:lbTab==='week'?'Her pazartesi sıfırlanır. Normal oyunlar sayılır.':'Normal oyunlardaki en iyi skorlar.';
+  $('nick').textContent=P.nick+(P.founder&&P.founder<=1000?`  🌱 #${P.founder}`:'');
+  $('inviteBtn').hidden=lbTab!=='friends';
+  const subs={daily:`Günün tarlası #${DAYNO}: ${TODAY_MOD.n}. Herkes aynı tarlada.`,friends:'Bugünün tarlasında sen ve arkadaşların.',
+    week:'Her pazartesi sıfırlanır. Normal oyunlar sayılır.',all:'Normal oyunlardaki en iyi skorlar.'};
+  $('lbSub').textContent=subs[lbTab];
   const box=$('lbList'),tab=lbTab;box.innerHTML='<div class="lbmsg">Sıralama yükleniyor…</div>';
   try{
     const rows=await rpc('get_board',{p_board:tab,p_device:P.dev,p_day:TODAY});if(tab!==lbTab)return;
-    if(!rows.length){box.innerHTML=`<div class="lbmsg">Henüz kimse yok. İlk sen ol!<br><button class="btn red small" id="lbGo">${tab==='daily'?'Günün tarlasını oyna':'Hemen oyna'}</button></div>`;
-      $('lbGo').onclick=()=>startGame(tab==='daily'?'daily':'normal');return}
+    const isDaily=tab==='daily'||tab==='friends';
+    if(!rows.length){box.innerHTML=tab==='friends'
+        ?'<div class="lbmsg">Arkadaş tablon boş. Bir arkadaşını davet et, aynı tarlada kim daha iyi görün!</div>'
+        :`<div class="lbmsg">Henüz kimse yok. İlk sen ol!<br>İlk 1000 oyuncu kalıcı 🌱 Kurucu çiftçi rozeti alır.<br><button class="btn red small" id="lbGo">${isDaily?'Günün tarlasını oyna':'Hemen oyna'}</button></div>`;
+      const g=$('lbGo');if(g)g.onclick=()=>startGame(isDaily?'daily':'normal');return}
+    const total=rows[0].total;
+    $('lbSub').textContent+=` ${fmt(total)} çiftçi ${tab==='friends'?'yarışıyor.':tab==='all'?'var.':'yarışıyor.'}`;
     let html='',prev=0;
     for(const r of rows){if(r.rnk>prev+1&&prev)html+='<div class="lbgap">⋮</div>';prev=r.rnk;
       html+=`<div class="lbrow${r.me?' me':''}"><span class="rk">${medal(r.rnk)}</span><span class="nm"></span><span class="an">${LV[r.max_lv].e}</span><b>${fmt(r.score)}</b></div>`}
     box.innerHTML=html;
-    // names are user content: set as text, never as HTML
-    box.querySelectorAll('.lbrow .nm').forEach((el,i)=>el.textContent=rows[i].name+(rows[i].me?' (sen)':''));
-    if(!rows.some(r=>r.me))box.insertAdjacentHTML('beforeend','<div class="lbmsg">Bu tabloda henüz skorun yok. Bir oyun oyna, sen de gir!</div>');
+    // names are user content: set as text, never as HTML; badges are added as separate nodes
+    box.querySelectorAll('.lbrow .nm').forEach((el,i)=>{const r=rows[i];
+      if(r.founder<=1000){const f=document.createElement('span');f.className='fd';f.textContent='🌱';f.title='Kurucu çiftçi #'+r.founder;el.appendChild(f)}
+      el.appendChild(document.createTextNode(r.name+(r.me?' (sen)':'')));
+      if(r.dev){const t=document.createElement('small');t.textContent='Geliştirici';el.appendChild(t)}});
+    const me=rows.find(r=>r.me);
+    if(me&&me.founder<=1000){if(P.founder!==me.founder){P.founder=me.founder;save()}
+      if(!P.tips.founder){P.tips.founder=1;save();sfx.legend();toast(`🌱 Kurucu çiftçi #${me.founder} oldun! Bu rozet senin, kalıcı.`)}}
+    if(!me)box.insertAdjacentHTML('beforeend',`<div class="lbmsg">${tab==='friends'?'Bugünün tarlasını oyna, arkadaşlarınla karşılaş!':'Bu tabloda henüz skorun yok. Bir oyun oyna, sen de gir!'}</div>`);
+    if(total<10&&tab!=='friends')box.insertAdjacentHTML('beforeend','<div class="lbmsg">Oyun yeni açıldı! İlk 1000 oyuncu kalıcı 🌱 Kurucu çiftçi rozeti alır.</div>');
   }catch(e){if(tab!==lbTab)return;box.innerHTML='<div class="lbmsg">Sıralamaya ulaşılamadı. İnternet bağlantını kontrol edip tekrar dene.<br><button class="btn plain small" id="lbRetry">Tekrar dene</button></div>';$('lbRetry').onclick=renderLB}
 }
 document.querySelectorAll('#lbTabs button').forEach(b=>b.onclick=()=>{lbTab=b.dataset.t;sfx.click();renderLB()});
@@ -826,6 +864,7 @@ $('nickSave').onclick=saveNick;$('nickIn').addEventListener('keydown',e=>{if(e.k
 function grantPremium(){if(P.premium)return;P.premium=true;
   for(const k of ['theme','sling','trail'])if(!P.own[k].includes('altin'))P.own[k].push('altin');
   P.eggs+=300;save();refreshEggs(true);setTimeout(()=>toast('👑 Çiftlik Sahibi oldun! Teşekkürler, +300 🥚'),1200)}
+if(qs.get('davet')){P.pendingInvite=qs.get('davet').slice(0,12);save();history.replaceState(null,'',location.pathname)}
 if(qs.get('premium')==='ok'){grantPremium();history.replaceState(null,'',location.pathname)}
 
 /* ---------- game logic ---------- */
@@ -909,7 +948,7 @@ function finish(){
   $('newRec').hidden=!rec;$('stBig').textContent=LV[maxLv].e;$('stBigN').textContent=LV[maxLv].n.toLowerCase();
   $('stMerge').textContent=merges;$('stShot').textContent=launched;$('finalScore').textContent='0';$('earn').textContent=earn;
   $('dbl').hidden=lastEarn<2;$('dbl').textContent=P.premium?'Yumurtaları 2 katla 👑':'Reklamla 2 kat yumurta';
-  $('share').textContent='Paylaş';
+  $('share').textContent=mode==='daily'?'Meydan oku':'Paylaş';
   $('rankLine').hidden=true;updHud();show('over',true);countUp($('finalScore'),score);if(earn)sfx.coin();submitScore();
 }
 $('dbl').onclick=()=>rewarded('iki-kat',()=>{P.eggs+=lastEarn;save();$('earn').textContent=lastEarn*2;$('dbl').hidden=true;sfx.coin();toast(`+${lastEarn} 🥚 daha!`)});
@@ -1391,9 +1430,10 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{sfx.click();
 const toggleMute=()=>{muted=!muted;store.set('muted',muted?'1':'0');setMute();ensureAudio();sfx.click()};
 $('muteBtn').onclick=toggleMute;$('muteBtn2').onclick=toggleMute;
 $('share').onclick=async()=>{
-  const url=location.origin+location.pathname;let txt;
+  let url=location.origin+location.pathname,txt;
   if(mode==='daily'){const row=LV.map((l,i)=>i<=maxLv?l.e:'⬛').join('');
-    txt=`Sapan Çiftliği, Günün Tarlası #${DAYNO} (${TODAY_MOD.n})\n${row}\n${fmt(score)} puan`}
+    txt=`Sapan Çiftliği, Günün Tarlası #${DAYNO} (${TODAY_MOD.n})\n${row}\n${fmt(score)} puan. Geçebilir misin?`;
+    try{url=inviteUrl(await ensureCode())}catch(e){}}
   else txt=`Sapan Çiftliği'nde ${fmt(score)} puan yaptım, en büyük hayvanım ${LV[maxLv].e} ${LV[maxLv].n}! Geçebilir misin?`;
   try{if(navigator.share){await navigator.share({title:'Sapan Çiftliği',text:txt,url});return}
     await navigator.clipboard.writeText(txt+'\n'+url);toast('Sonuç panoya kopyalandı')}catch(e){}};
@@ -1433,6 +1473,7 @@ $('splash').addEventListener('click',()=>{
   const d=$('doors');d.classList.add('shut');
   setTimeout(()=>{show('splash',false);toMenu();resize(true);
     setTimeout(()=>{d.classList.remove('shut');sfx.rooster();
+      if(P.pendingInvite)setTimeout(acceptInvite,600);
       if(canDaily())setTimeout(()=>{if(state==='menu'){renderQuests();show('quests',true)}},900)},250)},520);
 });
 
