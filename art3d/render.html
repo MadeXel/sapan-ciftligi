@@ -1,0 +1,15 @@
+<!doctype html><html><body style="margin:0;background:transparent">
+<script type="module">
+import * as S from './scene.js';
+const out = {};
+for (const tod of ['day', 'evening', 'night']) {
+  out[`house-${tod}`] = S.render(S.house(tod), tod, { pts: { chimney: [2.3 / 4, 1.45 + .12 + 1.36, -.2] } });
+  out[`barn-${tod}`] = S.render(S.barn(tod, false), tod, { pts: { door: [0, .1, 1.2] } });
+  out[`barnopen-${tod}`] = S.render(S.barn(tod, true), tod, { pts: { door: [0, .1, 1.2] } });
+  out[`tower-${tod}`] = S.render(S.tower(tod), tod, { pts: { hub: [0, 2.72, .82] } });
+  out[`blades-${tod}`] = S.render(S.blades(tod), tod, { front: true, shadow: false });
+  out[`tree-${tod}`] = S.render(S.tree(tod, 3), tod);
+  out[`fence-${tod}`] = S.render(S.fence(), tod);
+}
+window.__out = out;
+</script></body></html>

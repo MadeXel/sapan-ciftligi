@@ -132,11 +132,12 @@ body:not(.t-night) .skyfx i:nth-child(1){top:38%;animation-delay:-2s}body:not(.t
 .sground{position:absolute;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom,0px) + 132px);background:var(--hill1);z-index:1}
 .sland{position:absolute;left:50%;transform:translateX(-50%);width:min(125%,640px);aspect-ratio:4/3;max-height:58vh;bottom:calc(env(safe-area-inset-bottom,0px) + 130px);z-index:1}
 .sland svg{position:absolute;inset:0;width:100%;height:100%}
-.sbarn .door{transition:transform .9s cubic-bezier(.3,1.3,.5,1)}
-.sbarn .dl{transform-box:fill-box;transform-origin:left center}.sbarn .dr{transform-box:fill-box;transform-origin:right center}
-.sbarn .glow{opacity:0;transition:opacity .6s}
-#splash.arrived .sbarn .dl{transform:scaleX(.12)}#splash.arrived .sbarn .dr{transform:scaleX(.12)}
-#splash.arrived .sbarn .glow{opacity:1;filter:drop-shadow(0 0 8px #FFC94A)}
+.art-open{opacity:0;transition:opacity .9s ease}
+#splash.arrived .art-open{opacity:1}
+.blades3d{transform-box:view-box;animation:spin 10s linear infinite}
+.smoke3d circle{fill:rgba(255,255,255,.75);transform-box:fill-box;transform-origin:center;animation:smoke 4.5s linear infinite;opacity:0}
+.smoke3d circle:nth-child(2){animation-delay:1.5s}.smoke3d circle:nth-child(3){animation-delay:3s}
+body.t-night .smoke3d circle{fill:rgba(200,210,235,.45)}
 .walker{position:absolute;left:0;top:0;z-index:3;transform:translate(-50%,-92%);pointer-events:none;transition:opacity .5s}
 .walker .em{display:block;font-size:var(--ws,30px);line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.2));animation:waddle .42s ease-in-out infinite alternate;transform-origin:50% 100%}
 .walker.evolve .em{animation:evolve .5s cubic-bezier(.3,1.7,.5,1)}
@@ -191,7 +192,7 @@ body.t-evening .lantern::after,body.t-night .lantern::after{content:"";position:
 .farm{position:relative;z-index:1;flex:1 1 auto;min-height:96px;width:100%;display:flex;align-items:flex-end;justify-content:center;margin-top:-40px}
 .land{position:relative;width:100%;max-width:520px;aspect-ratio:2/1;margin-bottom:-6px}
 .land svg{position:absolute;inset:0;width:100%;height:100%}
-.land svg.far{inset:auto 0 45% 0;height:115%}
+.land svg.far{inset:auto 0 28% 0;height:132%}
 .blades{transform-box:fill-box;transform-origin:center;animation:spin 9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .win{fill:#9CC9DD;stroke:#6E4A2A;stroke-width:2}
@@ -433,39 +434,26 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
   </div>
   <div class="farm" id="farm">
     <div class="land">
-      <svg class="far" viewBox="0 0 400 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <svg class="far" id="mfar" viewBox="0 0 400 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+        <linearGradient id="flit" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".22"/><stop offset=".55" stop-color="#FFF6D8" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+        <linearGradient id="fpathfill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9B57A"/><stop offset="1" stop-color="#C39A5E"/></linearGradient>
+      </defs>
         <path d="M0 110 C60 70 120 60 190 88 S320 50 400 72 V160 H0Z" fill="var(--hill2)" opacity=".45"/>
+        <g id="mFar"></g>
         <path d="M0 132 C80 104 170 112 240 124 S350 110 400 104 V160 H0Z" fill="var(--hill2)" opacity=".7"/>
-        <g transform="translate(96 62)">
-          <path d="M-7 58 L-3 6 H3 L7 58Z" fill="#EFE3CC" stroke="#8A6A45" stroke-width="1.5"/>
-          <path d="M-5 8 L0 -1 L5 8Z" fill="#B83A30"/>
-          <g class="blades"><path d="M0 4 L3 -22 L-1 -22Z M0 4 L26 7 L26 3Z M0 4 L-3 30 L1 30Z M0 4 L-26 1 L-26 5Z" fill="#FFF6E0" stroke="#8A6A45" stroke-width="1"/><circle cx="0" cy="4" r="2.5" fill="#6B4222"/></g>
-        </g>
-        <g fill="var(--hill1)" opacity=".8"><circle cx="300" cy="104" r="9"/><circle cx="310" cy="100" r="11"/><circle cx="322" cy="105" r="8"/><rect x="309" y="108" width="3" height="8" fill="#6B4222"/></g>
+        <path d="M0 132 C80 104 170 112 240 124 S350 110 400 104 V160 H0Z" fill="url(#flit)"/>
       </svg>
-      <svg viewBox="0 0 400 200" aria-hidden="true">
+      <svg id="mland" viewBox="0 0 400 200" aria-hidden="true">
+        <defs>
+        <linearGradient id="mlit" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".22"/><stop offset=".55" stop-color="#FFF6D8" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+        <linearGradient id="mpathfill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9B57A"/><stop offset="1" stop-color="#C39A5E"/></linearGradient>
+      </defs>
         <path d="M0 118 C70 92 150 96 230 112 S350 100 400 90 V200 H0Z" fill="var(--hill2)"/>
-        <g transform="translate(34 88)">
-          <rect x="44" y="-14" width="11" height="24" fill="#8C4A3A"/>
-          <g class="smoke"><circle cx="49" cy="-20" r="5"/><circle cx="49" cy="-20" r="5"/><circle cx="49" cy="-20" r="5"/></g>
-          <path d="M0 26 L34 0 L68 26 V64 H0Z" fill="#E9D7B4" stroke="#8A6A45" stroke-width="2.5"/>
-          <path d="M-6 28 L34 -4 L74 28" fill="none" stroke="#8C4A3A" stroke-width="7" stroke-linecap="round"/>
-          <rect class="win" x="10" y="32" width="16" height="14" rx="2"/>
-          <rect class="win" x="42" y="32" width="16" height="14" rx="2"/>
-          <rect x="28" y="44" width="12" height="20" fill="#8A5A34"/>
-        </g>
-        <g transform="translate(296 78)">
-          <path d="M0 34 L38 4 L76 34 V80 H0Z" fill="#B83A30" stroke="#6E2019" stroke-width="3"/>
-          <path d="M-6 36 L38 0 L82 36" fill="none" stroke="#5B3A22" stroke-width="7" stroke-linecap="round"/>
-          <rect x="24" y="46" width="28" height="34" fill="#9E2F27" stroke="#FFF6E0" stroke-width="3"/>
-          <path d="M24 46 L52 80 M52 46 L24 80" stroke="#FFF6E0" stroke-width="3"/>
-          <circle class="win" cx="38" cy="25" r="6"/>
-        </g>
-        <g stroke="#8A5A34" stroke-width="3" stroke-linecap="round" opacity=".75">
-          <path d="M112 150 H286"/><path d="M112 140 H286"/>
-          <path d="M116 134 V156 M150 134 V156 M184 134 V156 M218 134 V156 M252 134 V156 M284 134 V156"/>
-        </g>
+        <path d="M0 118 C70 92 150 96 230 112 S350 100 400 90 V200 H0Z" fill="url(#mlit)"/>
+        <g id="mMid"></g>
         <path d="M0 150 C90 138 200 142 280 150 S370 148 400 144 V200 H0Z" fill="var(--hill1)"/>
+        <path d="M0 150 C90 138 200 142 280 150 S370 148 400 144 V200 H0Z" fill="url(#mlit)"/>
       </svg>
       <div class="pond" id="pond" hidden><span class="spout"><i></i><i></i><i></i></span><button class="pet whale" data-lv="10" aria-label="Balina"><span class="walk"><span class="em">🐳</span></span><i class="zz">z</i><span class="bubble"></span></button></div>
       <div class="pets" id="pets"></div>
@@ -587,36 +575,21 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
   <div class="sground"></div>
   <div class="sland" id="sland">
     <svg id="sscene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <defs>
+        <linearGradient id="slit" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".22"/><stop offset=".55" stop-color="#FFF6D8" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+        <linearGradient id="spathfill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9B57A"/><stop offset="1" stop-color="#C39A5E"/></linearGradient>
+      </defs>
       <path d="M0 150 C60 108 130 100 200 126 S330 86 400 108 V300 H0Z" fill="var(--hill2)" opacity=".5"/>
-      <g transform="translate(84 96)">
-        <path d="M-7 58 L-3 6 H3 L7 58Z" fill="#EFE3CC" stroke="#8A6A45" stroke-width="1.5"/>
-        <path d="M-5 8 L0 -1 L5 8Z" fill="#B83A30"/>
-        <g class="blades"><path d="M0 4 L3 -22 L-1 -22Z M0 4 L26 7 L26 3Z M0 4 L-3 30 L1 30Z M0 4 L-26 1 L-26 5Z" fill="#FFF6E0" stroke="#8A6A45" stroke-width="1"/><circle cx="0" cy="4" r="2.5" fill="#6B4222"/></g>
-      </g>
+      <g id="sFar"></g>
       <path d="M0 176 C80 146 170 150 250 166 S360 150 400 146 V300 H0Z" fill="var(--hill2)"/>
-      <g transform="translate(120 128)">
-        <rect x="40" y="-12" width="10" height="22" fill="#8C4A3A"/>
-        <g class="smoke"><circle cx="45" cy="-18" r="5"/><circle cx="45" cy="-18" r="5"/><circle cx="45" cy="-18" r="5"/></g>
-        <path d="M0 24 L30 0 L60 24 V56 H0Z" fill="#E9D7B4" stroke="#8A6A45" stroke-width="2.5"/>
-        <path d="M-5 26 L30 -3 L65 26" fill="none" stroke="#8C4A3A" stroke-width="6" stroke-linecap="round"/>
-        <rect class="win" x="8" y="30" width="14" height="12" rx="2"/><rect class="win" x="38" y="30" width="14" height="12" rx="2"/>
-      </g>
+      <path d="M0 176 C80 146 170 150 250 166 S360 150 400 146 V300 H0Z" fill="url(#slit)"/>
+      <g id="sMid"></g>
       <path d="M0 214 C90 196 200 200 290 212 S370 206 400 202 V300 H0Z" fill="var(--hill1)"/>
-      <g class="sbarn" transform="translate(284 150)">
-        <path d="M0 38 L42 6 L84 38 V92 H0Z" fill="#B83A30" stroke="#6E2019" stroke-width="3"/>
-        <path d="M-6 40 L42 1 L90 40" fill="none" stroke="#5B3A22" stroke-width="7" stroke-linecap="round"/>
-        <circle class="win" cx="42" cy="27" r="6"/>
-        <rect x="25" y="52" width="34" height="40" fill="#3A2412"/>
-        <rect class="glow" x="25" y="52" width="34" height="40" fill="#FFD27A"/>
-        <g class="door dl"><rect x="25" y="52" width="17" height="40" fill="#9E2F27" stroke="#FFF6E0" stroke-width="2.5"/><path d="M25 52 L42 92 M42 52 L25 92" stroke="#FFF6E0" stroke-width="2.5"/></g>
-        <g class="door dr"><rect x="42" y="52" width="17" height="40" fill="#9E2F27" stroke="#FFF6E0" stroke-width="2.5"/><path d="M42 52 L59 92 M59 52 L42 92" stroke="#FFF6E0" stroke-width="2.5"/></g>
-      </g>
-      <path id="spath" d="M52 280 C96 262 110 236 160 236 S236 262 266 250 S304 238 326 242" fill="none" stroke="#C9A064" stroke-width="16" stroke-linecap="round" opacity=".9"/>
-      <path d="M52 280 C96 262 110 236 160 236 S236 262 266 250 S304 238 326 242" fill="none" stroke="#E4C48C" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 10" opacity=".8"/>
-      <g stroke="#8A5A34" stroke-width="3" stroke-linecap="round" opacity=".85">
-        <path d="M30 222 H118"/><path d="M30 213 H118"/><path d="M34 208 V230 M62 208 V230 M90 208 V230 M116 208 V230"/>
-      </g>
-      <g font-size="16"><text x="22" y="298">🌼</text><text x="186" y="292">🌷</text><text x="360" y="292">🌼</text></g>
+      <path d="M0 214 C90 196 200 200 290 212 S370 206 400 202 V300 H0Z" fill="url(#slit)"/>
+      <g id="sNear"></g>
+      <path id="spath" d="M52 280 C96 262 110 236 160 236 S232 262 258 250 S288 238 306 244" fill="none" stroke="url(#spathfill)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M52 280 C96 262 110 236 160 236 S232 262 258 250 S288 238 306 244" fill="none" stroke="rgba(90,60,25,.25)" stroke-width="16" stroke-linecap="round" transform="translate(0 3)" style="mix-blend-mode:multiply"/>
+      <path d="M52 280 C96 262 110 236 160 236 S232 262 258 250 S288 238 306 244" fill="none" stroke="#EBD2A0" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 11" opacity=".75"/>
     </svg>
     <div class="steps" id="steps"></div>
     <div class="walker" id="walker"><span class="em">🐣</span><span class="wpuff">💨</span></div>
@@ -1112,6 +1085,29 @@ if(NATIVE){
   // web payments (Stripe, tip link) are not allowed for digital goods inside store apps; IAP comes later
   const pt=document.querySelector('#shopTabs [data-t=prem]');if(pt)pt.remove();
 }
+/* ---------- 3D art (rendered offline from art3d/, one style lock for all) ---------- */
+const ART={"house-day":{"w":958,"h":757,"ax":256,"ay":616,"chimney":[328,294]},"barn-day":{"w":1075,"h":820,"ax":281,"ay":654,"door":[214,690]},"barnopen-day":{"w":1093,"h":833,"ax":300,"ay":653,"door":[232,690]},"tower-day":{"w":838,"h":810,"ax":153,"ay":689,"hub":[107,419]},"blades-day":{"w":360,"h":360,"ax":180,"ay":180},"tree-day":{"w":606,"h":515,"ax":154,"ay":419},"fence-day":{"w":388,"h":232,"ax":148,"ay":170},"house-evening":{"w":1033,"h":751,"ax":256,"ay":587,"chimney":[328,265]},"barn-evening":{"w":1154,"h":813,"ax":281,"ay":622,"door":[214,659]},"barnopen-evening":{"w":1172,"h":826,"ax":300,"ay":622,"door":[232,659]},"tower-evening":{"w":929,"h":803,"ax":153,"ay":654,"hub":[107,384]},"blades-evening":{"w":360,"h":360,"ax":180,"ay":180},"tree-evening":{"w":657,"h":511,"ax":154,"ay":399},"fence-evening":{"w":404,"h":231,"ax":148,"ay":164},"house-night":{"w":830,"h":694,"ax":256,"ay":564,"chimney":[328,242]},"barn-night":{"w":941,"h":753,"ax":281,"ay":598,"door":[214,634]},"barnopen-night":{"w":960,"h":766,"ax":300,"ay":597,"door":[232,634]},"tower-night":{"w":683,"h":733,"ax":153,"ay":625,"hub":[107,355]},"blades-night":{"w":360,"h":360,"ax":180,"ay":180},"tree-night":{"w":520,"h":472,"ax":154,"ay":383},"fence-night":{"w":361,"h":219,"ax":148,"ay":159}};
+const ARTTOD=TOD==='night'?'night':TOD==='evening'?'evening':'day';
+function placeArt(g,items){
+  const NS='http://www.w3.org/2000/svg',out={};
+  for(const it of items){const key=it.a+'-'+ARTTOD,m=ART[key],k=it.k,an=it.anchor?m[it.anchor]:[m.ax,m.ay];
+    const x=it.x-an[0]*k,y=it.y-an[1]*k,im=document.createElementNS(NS,'image');
+    im.setAttribute('href','img/'+key+'.webp');im.setAttribute('x',x);im.setAttribute('y',y);im.setAttribute('width',m.w*k);im.setAttribute('height',m.h*k);
+    if(it.cls)im.setAttribute('class',it.cls);g.appendChild(im);out[it.a]={x,y,k,m};
+    if(it.a==='tower'){const b=ART['blades-'+ARTTOD],hx=x+m.hub[0]*k,hy=y+m.hub[1]*k,bk=k*.95,bi=document.createElementNS(NS,'image');
+      bi.setAttribute('href','img/blades-'+ARTTOD+'.webp');bi.setAttribute('x',hx-b.ax*bk);bi.setAttribute('y',hy-b.ay*bk);bi.setAttribute('width',b.w*bk);bi.setAttribute('height',b.h*bk);
+      bi.setAttribute('class','blades3d');bi.style.transformOrigin=hx+'px '+hy+'px';g.appendChild(bi)}
+    if(it.a==='house'){const cx=x+m.chimney[0]*k,cy=y+m.chimney[1]*k,sg=document.createElementNS(NS,'g');sg.setAttribute('class','smoke3d');
+      for(let i=0;i<3;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('cx',cx);c.setAttribute('cy',cy-2);c.setAttribute('r',Math.max(3,k*28));sg.appendChild(c)}g.appendChild(sg)}}
+  return out}
+// splash: path ends exactly on the barn door threshold
+placeArt($('sFar'),[{a:'tower',x:78,y:156,k:.13},{a:'tree',x:258,y:164,k:.11}]);
+placeArt($('sMid'),[{a:'tree',x:30,y:200,k:.14},{a:'house',x:156,y:196,k:.2}]);
+placeArt($('sNear'),[{a:'fence',x:52,y:230,k:.16},{a:'fence',x:108,y:224,k:.16},{a:'barn',x:306,y:248,k:.24,anchor:'door'},{a:'barnopen',x:306,y:248,k:.24,anchor:'door',cls:'art-open'}]);
+// menu farm
+placeArt($('mFar'),[{a:'tower',x:96,y:118,k:.1},{a:'tree',x:306,y:114,k:.09}]);
+placeArt($('mMid'),[{a:'house',x:62,y:140,k:.18},{a:'fence',x:150,y:138,k:.12},{a:'fence',x:196,y:138,k:.12},{a:'fence',x:242,y:138,k:.12},{a:'barn',x:342,y:142,k:.185}]);
+
 /* ---------- cozy farm (menu) ---------- */
 const PET_SAY=[['Cik cik!','Acıktım!','Büyüyünce fare olacağım'],['Cik?','Peynir var mı?','Kuyruğuma basma!'],['Havuç?','Zıp zıp!','Kulaklarım rüzgarda'],
   ['Miyav~','Mırr...','Beni sev, sonra fırlat'],['Hav hav!','Top at!','Kuyruğum durmuyor'],['Hönk!','Çamur zamanı!','Bugün temizim, söz'],

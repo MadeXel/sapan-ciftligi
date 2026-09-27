@@ -1,0 +1,1 @@
+{ "name": "sapan-art3d", "private": true, "description": "Sahne varliklarinin 3D kaynagi", "dependencies": { "three": "0.169.0" } }
