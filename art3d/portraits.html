@@ -1,0 +1,25 @@
+<!doctype html><html><body style="margin:0">
+<script type="module">
+import * as THREE from '../js/three.module.min.js';
+import { CAST3D, CAST_KEYS } from '../js/animals3d.js';
+import { TOKEN_LIGHT as L } from './style.js';
+const P = 512, r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); r.setSize(P, P); r.setClearColor(0, 0);
+r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace; r.toneMappingExposure = L.exposure;
+const out = {};
+function shoot(k, sleep) {
+  const s = new THREE.Scene(); s.add(new THREE.HemisphereLight(L.sky, L.ground, L.hemiI));
+  const d = new THREE.DirectionalLight(L.key, L.keyI); d.position.set(...L.keyDir).normalize().multiplyScalar(12); d.castShadow = true; d.shadow.mapSize.set(1024, 1024);
+  d.shadow.camera.left = -3; d.shadow.camera.right = 3; d.shadow.camera.top = 3; d.shadow.camera.bottom = -3; s.add(d);
+  const f = new THREE.DirectionalLight(L.fill, L.fillI); f.position.set(...L.fillDir).normalize().multiplyScalar(12); s.add(f);
+  const rm = new THREE.DirectionalLight(L.rim, L.rimI); rm.position.set(...L.rimDir).normalize().multiplyScalar(12); s.add(rm);
+  const a = CAST3D[k](); if (sleep) a.userData.rig.eyes.scale.y = 0.12; a.rotation.y = 0.55; s.add(a);
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(8, 8), new THREE.ShadowMaterial({ opacity: 0.22 })); sh.rotation.x = -Math.PI / 2; sh.receiveShadow = true; s.add(sh);
+  // frame the whole animal: fit its bounding box into a square
+  const box = new THREE.Box3().setFromObject(a), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
+  const cam = new THREE.PerspectiveCamera(24, 1, 0.1, 100), dist = Math.max(sz.x, sz.y, sz.z) * 3.1;
+  cam.position.set(c.x + dist * 0.12, c.y + dist * 0.42, c.z + dist * 0.9); cam.lookAt(c.x, c.y - sz.y * 0.05, c.z);
+  r.render(s, cam); return r.domElement.toDataURL('image/png');
+}
+for (const k of [...CAST_KEYS, 'unicorn']) { out[k] = shoot(k, false); out[k + '-sleep'] = shoot(k, true); }
+window.__out = out;
+</script></body></html>

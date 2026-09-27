@@ -23,3 +23,10 @@ Sonra `meta.json` içeriğini `index.html` içindeki `const ART=` satırına yap
 python render_cast.py     # img/cast/*.webp
 python render_extras.py   # img/pen/*.webp, img/ui/*.webp
 ```
+
+## Gerçek zamanlı 3D (3d dalı)
+- `js/animals3d.js`: 12 tam vücutlu karakter. İskelet parçaları (bacaklar, boyun, baş, kuyruk, gözler) adlandırılmıştır; oyun bunlarla yürüme, dönme, göz kırpma ve kuyruk sallama animasyonu yapar. Aynı kod hem oyunda hem portre render'ında kullanılır.
+- `js/game3d.js`: sahne, kamera (her ekrana otomatik sığar), biyomlar (her tema ayrı bir dünya), ağıl, sapan, efektler. Oyun mantığına dokunmaz; sadece durumu çizer.
+- `js/bake.js`: hareketsiz parçaları malzemeye göre birleştirir (çizim çağrıları yarıdan fazla azalır).
+- WebGL yoksa oyun otomatik olarak 2D çizime döner. Adrese `?2d` ekleyerek 2D modu zorlayabilirsin.
+- Portreleri yeniden üret: `python render_portraits.py` → `img/cast3d/`.
