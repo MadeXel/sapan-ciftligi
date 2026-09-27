@@ -1,0 +1,20 @@
+<!doctype html><html><body style="margin:0">
+<script type="module">
+import * as THREE from './node_modules/three/build/three.module.js';
+import { TOKEN_LIGHT as L } from './style.js';
+import { renderPen, THEMES } from './pen.js';
+import { ICONS } from './icons.js';
+const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+r.setClearColor(0, 0); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace;
+const out = {};
+for (const t in THEMES) { out['pen-' + t] = renderPen(r, t, 'bg'); out['fence-' + t] = renderPen(r, t, 'fg'); }
+// icons: same studio light as the characters
+r.setSize(256, 256, false); r.toneMappingExposure = L.exposure;
+for (const k in ICONS) { const s = new THREE.Scene(); s.add(new THREE.HemisphereLight(L.sky, L.ground, L.hemiI));
+  const key = new THREE.DirectionalLight(L.key, L.keyI); key.position.set(...L.keyDir).normalize().multiplyScalar(10); s.add(key);
+  const fill = new THREE.DirectionalLight(L.fill, L.fillI); fill.position.set(...L.fillDir).normalize().multiplyScalar(10); s.add(fill);
+  const rim = new THREE.DirectionalLight(L.rim, L.rimI); rim.position.set(...L.rimDir).normalize().multiplyScalar(10); s.add(rim);
+  s.add(ICONS[k]()); const cam = new THREE.OrthographicCamera(-1.25, 1.25, 1.25, -1.25, .1, 50); cam.position.set(0, 3, 10); cam.lookAt(0, 0, 0);
+  r.render(s, cam); out['ico-' + k] = r.domElement.toDataURL('image/png'); }
+window.__out = out;
+</script></body></html>

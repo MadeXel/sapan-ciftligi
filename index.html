@@ -26,6 +26,17 @@ body.t-evening{--bg1:#5A6E3A;--bg2:#34431F;--sky1:#E9875A;--sky2:#FBD29A;--hill1
 body.t-night{--bg1:#23384A;--bg2:#141F2C;--sky1:#0F1A33;--sky2:#2E4470;--hill1:#2E5A3A;--hill2:#1F412A;--sun:#F4F1D0}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
+.aimg{display:inline-block;width:1.5em;height:1.5em;margin:-.25em;object-fit:contain;vertical-align:middle;pointer-events:none;-webkit-user-drag:none}
+.aimg.sm{width:30px;height:30px;margin:-4px}
+.aimg.md{width:44px;height:44px;margin:-6px}
+.aimg.lg{width:84px;height:84px;margin:-10px}
+.aimg.sil{filter:brightness(0);opacity:.22}
+.aimg.nx{width:60px;height:60px;margin:-7px}
+.aimg.ticon{width:34px;height:34px;margin:-8px 4px -8px -6px}
+.eggi{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.22em;margin:0 .05em;object-fit:contain}
+.uico{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 0 rgba(0,0,0,.2))}
+.pet .aimg.pet3d{width:calc(var(--s)*1.5);height:calc(var(--s)*1.5);margin:calc(var(--s)*-.25)}
+.walker .aimg.walk3d{width:calc(var(--ws,30px)*1.55);height:calc(var(--ws,30px)*1.55);margin:0}
 html,body{height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 body{font-family:'Baloo 2',ui-rounded,system-ui,sans-serif;color:var(--cream);background:radial-gradient(120% 70% at 50% 0%,var(--bg1),var(--bg2) 75%) var(--bg2)}
 button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
@@ -47,7 +58,7 @@ header{flex:none;display:flex;align-items:center;gap:10px;padding:10px 12px 8px}
 .plaque small{font-size:13px;font-weight:700;opacity:.9;white-space:nowrap;margin-left:auto;text-shadow:0 1px 0 var(--wood-dd)}
 @keyframes bump{40%{transform:scale(1.15)}}
 .next{flex:none;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:700;line-height:1}
-.next .dot{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:26px;border:3px solid var(--wood-d);box-shadow:0 3px 0 var(--wood-dd);margin-bottom:3px}
+.next .dot{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:26px;background:radial-gradient(circle at 40% 35%,#FFF8E4,#F2DDB0);border:3px solid var(--wood-d);box-shadow:0 3px 0 var(--wood-dd);margin-bottom:3px}
 .next .dot.in{animation:dropin .35s cubic-bezier(.3,1.6,.5,1)}
 @keyframes dropin{from{transform:scale(.3) translateY(-8px)}}
 .sq{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;position:relative}
@@ -412,7 +423,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
 <div id="app">
   <header>
     <div class="plaque wood nails"><b id="score">0</b><small>Rekor <span id="best">0</span></small></div>
-    <div class="next"><div class="dot" id="next" role="button" aria-label="Sıradaki hayvanla değiştir">🐣</div>sıradaki</div>
+    <div class="next"><div class="dot" id="next" role="button" aria-label="Sıradaki hayvanla değiştir"></div>sıradaki</div>
     <button class="sq wood" id="pauseBtn" aria-label="Duraklat"><svg width="20" height="20" viewBox="0 0 20 20" fill="#FFF6E0"><rect x="3" y="2" width="5" height="16" rx="2"/><rect x="12" y="2" width="5" height="16" rx="2"/></svg></button>
   </header>
   <div id="stage">
@@ -426,7 +437,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
 
 <section class="screen" id="menu" hidden>
   <div class="msky" aria-hidden="true"><div class="stars"></div><div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="flyer" id="flyer"></div></div>
-  <div class="mtop"><div class="greet" id="greet"></div><div class="eggs" id="mEggs">🥚 0</div></div>
+  <div class="mtop"><div class="greet" id="greet"></div><div class="eggs" id="mEggs"></div></div>
   <div class="roof">
     <div class="beam"></div>
     <div class="hang msign"><div class="sign wood nails"><h1>Sapan<br>Çiftliği</h1></div></div>
@@ -455,7 +466,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
         <path d="M0 150 C90 138 200 142 280 150 S370 148 400 144 V200 H0Z" fill="var(--hill1)"/>
         <path d="M0 150 C90 138 200 142 280 150 S370 148 400 144 V200 H0Z" fill="url(#mlit)"/>
       </svg>
-      <div class="pond" id="pond" hidden><span class="spout"><i></i><i></i><i></i></span><button class="pet whale" data-lv="10" aria-label="Balina"><span class="walk"><span class="em">🐳</span></span><i class="zz">z</i><span class="bubble"></span></button></div>
+      <div class="pond" id="pond" hidden><span class="spout"><i></i><i></i><i></i></span><button class="pet whale" data-lv="10" aria-label="Balina"><span class="walk"><span class="em"><img class="aimg pet3d" src="img/cast/whale.webp" alt=""></span></span><i class="zz">z</i><span class="bubble"></span></button></div>
       <div class="pets" id="pets"></div>
       <div class="bugs" id="bugs" aria-hidden="true"></div>
     </div>
@@ -469,10 +480,10 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <button class="btn barnbtn" id="play"><span>Oyna</span></button>
     <button class="btn bale" id="dailyBtn"><span class="dtitle">Günün tarlası #<span id="dNo">1</span></span><small id="dMod"></small></button>
     <div class="icons">
-      <button class="ib" id="shopBtn"><i>🧺</i>Pazar</button>
-      <button class="ib" id="questBtn"><i>📜</i>Görevler<em class="badge" id="qBadge" hidden>1</em></button>
-      <button class="ib" id="bookBtn"><i>📖</i>Defter</button>
-      <button class="ib" id="lbBtn"><i>🏆</i>Sıralama</button>
+      <button class="ib" id="shopBtn"><i><img class="uico" src="img/ui/basket.webp" alt=""></i>Pazar</button>
+      <button class="ib" id="questBtn"><i><img class="uico" src="img/ui/scroll.webp" alt=""></i>Görevler<em class="badge" id="qBadge" hidden>1</em></button>
+      <button class="ib" id="bookBtn"><i><img class="uico" src="img/ui/book.webp" alt=""></i>Defter</button>
+      <button class="ib" id="lbBtn"><i><img class="uico" src="img/ui/trophy.webp" alt=""></i>Sıralama</button>
       <button class="ib" id="muteBtn" aria-label="Sesi aç/kapat"><i id="muteIco"></i>Ses</button>
     </div>
   </div>
@@ -492,7 +503,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <p class="sub" style="margin-top:6px">İkinci şansta ağılın alt yarısı temizlenir, kaldığın yerden devam edersin.</p>
     <div class="cd"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#F3E4C4" stroke-width="10"/><circle id="cdRing" cx="50" cy="50" r="44" fill="none" stroke="#C8453A" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/></svg><b id="cdN">6</b></div>
     <button class="btn red" id="scAd">Reklamla devam et</button>
-    <button class="btn plain" id="scEgg">40 🥚 ile devam et</button>
+    <button class="btn plain" id="scEgg">40 <img class="eggi" src="img/ui/egg.webp" alt="yumurta"> ile devam et</button>
     <button class="link" id="scNo">Hayır, oyunu bitir</button>
   </div>
 </section>
@@ -503,7 +514,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
     <div class="rec" id="newRec" hidden>Yeni rekor!</div>
     <div class="stats"><div><b id="stBig">🐣</b><span id="stBigN">en büyük</span></div><div><b id="stMerge">0</b><span>birleşme</span></div><div><b id="stShot">0</b><span>atış</span></div></div>
     <button class="rankline" id="rankLine" hidden></button>
-    <div class="earn">+<span id="earn">0</span> 🥚 <span class="xpg">+<span id="xpGain">0</span> XP</span></div>
+    <div class="earn">+<span id="earn">0</span> <img class="eggi" src="img/ui/egg.webp" alt="yumurta"> <span class="xpg">+<span id="xpGain">0</span> XP</span></div>
     <div class="xpline"><span id="xpLvl">Sv. 1</span><div class="bar"><i id="xpBar"></i></div></div>
     <button class="btn hay small" id="dbl">Reklamla 2 kat yumurta</button>
     <button class="btn red" id="again">Tekrar oyna</button>
@@ -524,7 +535,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
 <section class="screen modal" id="shop" hidden>
   <div class="panel wide"><div class="tab wood">Pazar</div>
     <button class="x" data-close="shop" aria-label="Kapat">×</button>
-    <div class="bal">🥚 <span id="sEggs">0</span></div>
+    <div class="bal"><img class="eggi" src="img/ui/egg.webp" alt="yumurta"> <span id="sEggs">0</span></div>
     <button class="btn hay small" id="freeEggs"></button>
     <div class="tabs" id="shopTabs"><button data-t="theme" class="on">Tema</button><button data-t="sling">Sapan</button><button data-t="trail">İz</button><button data-t="prem">👑 Sahip</button></div>
     <div class="scroll"><div id="items"></div></div>
@@ -540,7 +551,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
       <button class="btn red small" id="claimDaily"></button>
       <h3 class="h">Bugünün görevleri</h3>
       <div id="qlist"></div>
-      <p class="sub">Üçünü de bitirene 50 🥚 bonus. Görevler her gece yenilenir.</p>
+      <p class="sub">Üçünü de bitirene 50 <img class="eggi" src="img/ui/egg.webp" alt="yumurta"> bonus. Görevler her gece yenilenir.</p>
     </div>
   </div>
 </section>
@@ -592,7 +603,7 @@ h3.h{font-size:17px;font-weight:800;text-align:left;margin:10px 0 2px;color:var(
       <path d="M52 280 C96 262 110 236 160 236 S232 262 258 250 S288 238 306 244" fill="none" stroke="#EBD2A0" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 11" opacity=".75"/>
     </svg>
     <div class="steps" id="steps"></div>
-    <div class="walker" id="walker"><span class="em">🐣</span><span class="wpuff">💨</span></div>
+    <div class="walker" id="walker"><span class="em"></span><span class="wpuff">💨</span></div>
   </div>
   <div class="loader">
     <div class="status" id="status">Civciv yola çıktı…</div>
@@ -630,9 +641,18 @@ const LV=[
  {e:'🐑',n:'Koyun',r:56,c:'#F6F2E6'},{e:'🐴',n:'At',r:64,c:'#B07A52'},
  {e:'🐮',n:'İnek',r:73,c:'#EFEFEF'},{e:'🐘',n:'Fil',r:83,c:'#AEB9C7'},
  {e:'🐳',n:'Balina',r:94,c:'#7CC4F2'}];
-LV.forEach((l,i)=>l.v=2**(i+1));
-const UNI={e:'🦄',n:'Tek boynuz',r:26,c:'#EBDDFF'};
+const CASTK=['chick','mouse','rabbit','cat','dog','pig','sheep','horse','cow','elephant','whale'];
+LV.forEach((l,i)=>{l.v=2**(i+1);l.k=CASTK[i]});
+const UNI={e:'🦄',n:'Tek boynuz',r:26,c:'#EBDDFF',k:'unicorn'};
 const TOP=LV.length-1;
+/* ---------- 3D art assets (rendered from art3d/) ---------- */
+const TOKEN_FRAME=1.42;                        // tokens are rendered with the physics circle at radius 1 inside ±1.42
+const castSrc=(k,sleep)=>`img/cast/${k}${sleep?'-sleep':''}.webp`;
+const aimg=(k,cls='',sleep=false)=>`<img class="aimg ${cls}" src="${castSrc(k,sleep)}" alt="" draggable="false">`;
+const EGG='<img class="eggi" src="img/ui/egg.webp" alt="yumurta" draggable="false">';
+const escH=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const IMG={};function loadImg(src){if(!IMG[src])IMG[src]=new Promise(res=>{const i=new Image();i.decoding='async';i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src});return IMG[src]}
+const CASTIMG={};async function loadCast(){await Promise.all([...LV,UNI].flatMap(l=>[false,true].map(async sl=>{CASTIMG[l.k+(sl?'-sleep':'')]=await loadImg(castSrc(l.k,sl))})))}
 
 /* ---------- cosmetics ---------- */
 const THEMES={
@@ -780,7 +800,7 @@ const TODINFO={
   night:{greet:'Gece vardiyası! Ateşböcekleri de izliyor.',tint:'rgba(15,25,70,.46)',meta:'#141F2C'}}[TOD];
 document.querySelector('meta[name=theme-color]').content=TODINFO.meta;
 
-let scale=1,dpr=1,tokens=[],uniTok=null,bg=null,fg=null;
+let scale=1,dpr=1,tokens=[],uniTok=null,blinkTok=[],uniBlink=null,bg=null,fg=null;
 let bodies=[],pending=[],parts=[],floats=[],amb=[];
 let state='splash',mode='normal',score=0,best=+store.get('best',0),maxLv=0,shots=0,launched=0,merges=0,lastUni=false;
 let cur=null,next=null,loadT=0,aiming=false,down=null,pull=null,demoT=1,rand=Math.random,rand2=Math.random,mod=null;
@@ -800,25 +820,24 @@ function resize(force){
   scale=Math.max(.3,Math.min(aw/W,ah/H));dpr=Math.min(window.devicePixelRatio||1,3);
   cv.style.width=W*scale+'px';cv.style.height=H*scale+'px';
   cv.width=Math.round(W*scale*dpr);cv.height=Math.round(H*scale*dpr);
-  tokens=LV.map(makeToken);uniTok=makeToken(UNI);buildBg();buildFg();placeTut();
+  tokens=LV.map(l=>makeToken(l));uniTok=makeToken(UNI);blinkTok=LV.map(l=>makeToken(l,true));uniBlink=makeToken(UNI,true);buildBg();buildFg();placeTut();
 }
 function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
   const f=v=>Math.max(0,Math.min(255,Math.round(amt<0?v*(1+amt):v+(255-v)*amt)));return `rgb(${f(r)},${f(g)},${f(b)})`}
-function makeToken(l){
-  const k=scale*dpr,half=l.r+5,s=Math.ceil(half*2*k),c=document.createElement('canvas');
-  c.width=c.height=s;const g=c.getContext('2d');g.scale(k,k);
-  const gr=g.createRadialGradient(half-l.r*.35,half-l.r*.4,l.r*.1,half,half,l.r);
-  gr.addColorStop(0,shade(l.c,.45));gr.addColorStop(.6,l.c);gr.addColorStop(1,shade(l.c,-.18));
-  g.beginPath();g.arc(half,half,l.r,0,7);g.fillStyle=gr;g.fill();
-  g.lineWidth=Math.max(2.2,l.r*.085);g.strokeStyle=shade(l.c,-.55);g.globalAlpha=.75;g.stroke();g.globalAlpha=1;
-  g.beginPath();g.ellipse(half-l.r*.36,half-l.r*.46,l.r*.24,l.r*.14,-.6,0,7);g.fillStyle='rgba(255,255,255,.55)';g.fill();
-  g.font=`${l.r*1.2}px ${EMOJI_FONT}`;g.textAlign='center';g.textBaseline='middle';
-  g.fillText(l.e,half,half+l.r*.09);
+function makeToken(l,closed){
+  const k=scale*dpr,half=l.r*TOKEN_FRAME,sz=Math.ceil(half*2*k),c=document.createElement('canvas');c.width=c.height=sz;
+  const g=c.getContext('2d'),im=CASTIMG[l.k+(closed?'-sleep':'')];
+  if(im){g.imageSmoothingQuality='high';g.drawImage(im,0,0,sz,sz)}
+  else{g.scale(k,k);g.beginPath();g.arc(half,half,l.r,0,7);g.fillStyle=l.c;g.fill();g.font=`${l.r*1.2}px ${EMOJI_FONT}`;g.textAlign='center';g.textBaseline='middle';g.fillText(l.e,half,half+l.r*.09)}
   return {c,half};
 }
 function mkCanvas(){const c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;const g=c.getContext('2d');g.scale(scale*dpr,scale*dpr);return [c,g]}
+let penImg=null,fenceImg=null,penFor='';
+async function loadPen(){const id=P.eq.theme;penFor=id;const [a,b]=await Promise.all([loadImg(`img/pen/${id}.webp`),loadImg(`img/pen/fence-${id}.webp`)]);
+  if(penFor!==id)return;penImg=a;fenceImg=b;if(scale&&cv.width){buildBg();buildFg()}}
 function buildBg(){
   const [c,g]=mkCanvas();bg=c;const T=TH;
+  if(penImg&&penFor===P.eq.theme){g.imageSmoothingQuality='high';g.drawImage(penImg,0,0,W,H);applyTod(g);return}
   for(let y=0,i=0;y<H;y+=40,i++){g.fillStyle=T.stripe[i%2];g.fillRect(0,y,W,40)}
   let s=11;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;
   g.lineCap='round';
@@ -836,12 +855,17 @@ function buildBg(){
   g.fillStyle=sh;g.fillRect(0,DANGER_Y,W,14);
   g.strokeStyle=T.arrow;g.lineWidth=4;g.lineJoin='round';
   for(const x of [70,140,W-140,W-70])for(const y of [DANGER_Y+40,DANGER_Y+95]){g.beginPath();g.moveTo(x-12,y+7);g.lineTo(x,y-5);g.lineTo(x+12,y+7);g.stroke()}
+  applyTod(g);
+}
+function applyTod(g){
   if(TODINFO.tint){g.fillStyle=TODINFO.tint;g.fillRect(0,0,W,H)}
   if(TOD==='night'){const lg=g.createRadialGradient(SL.x,SL.y,10,SL.x,SL.y,170);lg.addColorStop(0,'rgba(255,200,110,.35)');lg.addColorStop(1,'rgba(255,200,110,0)');
     g.fillStyle=lg;g.fillRect(0,0,W,H)}
 }
 function buildFg(){
   const [c,g]=mkCanvas();fg=c;const T=TH,night=TOD==='night';
+  if(fenceImg&&penFor===P.eq.theme){g.imageSmoothingQuality='high';g.drawImage(fenceImg,0,0,W,H);
+    if(TODINFO.tint){g.globalCompositeOperation='source-atop';g.fillStyle=TODINFO.tint;g.fillRect(0,0,W,H);g.globalCompositeOperation='source-over'}return}
   g.fillStyle=night?'#1B2B24':T.border;g.beginPath();g.rect(0,0,W,H);g.rect(F,F,W-2*F,H-2*F);g.fill('evenodd');
   const rail=(x,y,w,h)=>{g.fillStyle=T.rail;g.fillRect(x,y,w,h);g.strokeStyle='rgba(50,30,10,.7)';g.lineWidth=1.5;g.strokeRect(x,y,w,h);
     g.fillStyle='rgba(255,255,255,.22)';w>h?g.fillRect(x,y+1,w,2):g.fillRect(x+1,y,2,h)};
@@ -926,7 +950,7 @@ const vib=ms=>{try{if(HAP){HAP.impact({style:(Array.isArray(ms)||ms>30)?'MEDIUM'
 
 /* ---------- economy ---------- */
 function addEggs(n,why){if(n<=0)return;P.eggs+=n;save();refreshEggs(true);sfx.coin();if(why)toast(`${why} +${n} 🥚`)}
-function refreshEggs(pop){for(const id of ['mEggs']){const e=$(id);e.textContent='🥚 '+fmt(P.eggs);if(pop){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}}
+function refreshEggs(pop){for(const id of ['mEggs']){const e=$(id);e.innerHTML=EGG+fmt(P.eggs);if(pop){e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop')}}
   const s=$('sEggs');if(s)s.textContent=fmt(P.eggs)}
 function stat(){let owned=-3;for(const k in P.own)owned+=P.own[k].length;return Object.assign({},P.stats,{book:disc.size+(uniSeen?1:0),level:lvlOf(P.xp),owned})}
 function checkAch(){const s=stat();for(const a of ACH){if(!P.ach[a.id]&&a.ok(s)){P.ach[a.id]=1;save();gsUnlock(a.id);addEggs(a.r,`Başarım: ${a.i} ${a.t}`);
@@ -1052,7 +1076,7 @@ async function renderLB(){
     const total=rows[0].total;
     let html='',prev=0;
     for(const r of rows){if(r.rnk>prev+1&&prev)html+='<div class="lbgap">⋮</div>';prev=r.rnk;
-      html+=`<div class="lbrow${r.me?' me':''}"><span class="rk">${medal(r.rnk)}</span><span class="nm"></span><span class="an">${LV[r.max_lv].e}</span><b>${fmt(r.score)}</b></div>`}
+      html+=`<div class="lbrow${r.me?' me':''}"><span class="rk">${medal(r.rnk)}</span><span class="nm"></span><span class="an">${aimg(LV[r.max_lv].k,"sm")}</span><b>${fmt(r.score)}</b></div>`}
     box.innerHTML=html;
     // names are user content: set as text, never as HTML; badges are added as separate nodes
     box.querySelectorAll('.lbrow .nm').forEach((el,i)=>{const r=rows[i];
@@ -1126,7 +1150,7 @@ function renderFarm(){
   pick.forEach((l,i)=>{
     const b=document.createElement('button');b.className='pet'+(night?' sleep':'')+(slots[i]<.25?' edge-l':slots[i]>.85?' edge-r':'');b.dataset.lv=l;b.setAttribute('aria-label',LV[l].n);
     b.style.cssText=`--x:${slots[i]*100}%;--b:${11+Math.random()*8}%;--s:${24+Math.min(l,8)*2}px;--w:${7+Math.random()*6}s;--dl:${-Math.random()*6}s;--r:${(Math.random()<.5?-1:1)*(6+Math.random()*8)}px;z-index:${20-Math.round(slots[i]*4)}`;
-    b.innerHTML=`<span class="walk"><span class="em">${LV[l].e}</span></span><i class="zz">z</i><span class="bubble"></span>`;
+    b.innerHTML=`<span class="walk"><span class="em">${aimg(LV[l].k,"pet3d",night)}</span></span><i class="zz">z</i><span class="bubble"></span>`;
     box.appendChild(b)});
   $('pond').hidden=!disc.has(TOP);
   // day: butterflies, night: fireflies
@@ -1139,6 +1163,8 @@ function renderFarm(){
     // a unicorn that has been found sometimes flies over the farm
     setInterval(()=>{if(state!=='menu'||!uniSeen||Math.random()<.5)return;const f=$('flyer');f.textContent='🦄';f.classList.remove('go');void f.offsetWidth;f.classList.add('go')},14000)}
 }
+setInterval(()=>{if(state!=='menu')return;const ps=[...document.querySelectorAll('#pets .pet:not(.sleep)')];if(!ps.length)return;
+  const p=ps[Math.random()*ps.length|0],im=p.querySelector('.aimg'),k=LV[+p.dataset.lv].k;if(!im)return;im.src=castSrc(k,true);setTimeout(()=>{if(!p.classList.contains('sleep'))im.src=castSrc(k)},140)},900);
 function petTap(p){
   const lv=+p.dataset.lv,b=p.querySelector('.bubble')||p.closest('.pond').querySelector('.bubble'),sleeping=p.classList.contains('sleep');
   const line=sleeping?SLEEP_SAY[Math.random()*SLEEP_SAY.length|0]:PET_SAY[lv][Math.random()*3|0];
@@ -1148,7 +1174,8 @@ function petTap(p){
   // bigger animals get deeper voices
   const f=900-lv*65;if(sleeping)tone(220,0,.5,'sine',.05,160);else{tone(f,0,.09,'triangle',.08,f*1.25);tone(f*1.2,.1,.12,'triangle',.07,f)}
   vib(8);clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('talk'),1600);
-  if(sleeping){p.classList.remove('sleep');clearTimeout(p._s);p._s=setTimeout(()=>{if(TOD==='night')p.classList.add('sleep')},5000)}
+  const pim=p.querySelector('.aimg'),pk=LV[lv].k;
+  if(sleeping){p.classList.remove('sleep');if(pim)pim.src=castSrc(pk);clearTimeout(p._s);p._s=setTimeout(()=>{if(TOD==='night'){p.classList.add('sleep');if(pim)pim.src=castSrc(pk,true)}},5000)}
 }
 
 /* ---------- premium ---------- */
@@ -1236,7 +1263,7 @@ function finish(){
   {const a=xpAt(L1),b=xpAt(L1+1);$('xpLvl').textContent='Sv. '+L1;$('xpBar').style.width=(L1>=MAXL?100:(P.xp-a)/(b-a)*100)+'%'}
   if(L1>L0)setTimeout(()=>levelUp(L0,L1),900);
   $('overTitle').textContent=mode==='daily'?`Günün tarlası #${DAYNO}`:'Ahır doldu!';
-  $('newRec').hidden=!rec;$('stBig').textContent=LV[maxLv].e;$('stBigN').textContent=LV[maxLv].n.toLowerCase();
+  $('newRec').hidden=!rec;$('stBig').innerHTML=aimg(LV[maxLv].k,'md');$('stBigN').textContent=LV[maxLv].n.toLowerCase();
   $('stMerge').textContent=merges;$('stShot').textContent=launched;$('finalScore').textContent='0';$('earn').textContent=earn;
   $('dbl').hidden=lastEarn<2;$('dbl').textContent=P.premium?'Yumurtaları 2 katla 👑':'Reklamla 2 kat yumurta';
   $('share').textContent=mode==='daily'?'Meydan oku':'Paylaş';
@@ -1256,7 +1283,7 @@ function gain(v,x,y,label){
   const t=tt();combo=t-lastMerge<1.3?combo+1:1;lastMerge=t;
   const mult=Math.min(combo,5),pts=v*mult;score+=pts;if(combo===5)P.stats.combo5n++;
   floats.push({x,y,t:0,txt:'+'+pts,big:false});
-  if(mult>1){floats.push({x:W/2,y:H*.42,t:0,txt:`Kombo x${mult}!`,big:true,huge:true});qev('combo',mult);
+  if(mult>1){floats=floats.filter(f=>!(f.huge&&/^Kombo/.test(f.txt)));floats.push({x:W/2,y:H*.42,t:0,txt:`Kombo x${mult}!`,big:true,huge:true});qev('combo',mult);
     if(mult>P.stats.maxCombo){P.stats.maxCombo=mult;checkAch()}}
   if(label)floats.push({x,y:y-28,t:0,txt:label,big:true});
   updHud();
@@ -1265,8 +1292,8 @@ function discover(lv){
   if(!live())return;
   if(lv>maxLv)maxLv=lv;
   if(disc.has(lv))return;disc.add(lv);store.set('disc',JSON.stringify([...disc]));freshSlot=lv;renderStrip();
-  if(lv===TOP){toast('🐳 Çiftlikte balina mı?! Burada her şey mümkün.');shake=.6}
-  else toast(`Yeni hayvan: ${LV[lv].e} ${LV[lv].n}!`);
+  if(lv===TOP){toast('Çiftlikte balina mı?! Burada her şey mümkün.','whale');shake=.6}
+  else toast(`Yeni hayvan: ${LV[lv].n}!`,LV[lv].k);
   checkAch();
 }
 function clampIn(b){b.x=Math.min(W-F-b.r,Math.max(F+b.r,b.x));b.y=Math.min(H-F-b.r,Math.max(F+b.r,b.y))}
@@ -1299,7 +1326,7 @@ function launch(){
   const sp=pull.power*maxSpeed,b=mk(cur.lv,SL.x,SL.y,cur.uni);
   b.vx=pull.ux*sp;b.vy=pull.uy*sp;b.pop=1;b.trail=!!TR.k;pending.push(b);launched++;qev('shot');
   sfx.launch(pull.power);vib(8);
-  if(cur.uni&&!uniSeen){uniSeen=true;store.set('uni','1');toast('🦄 Tek boynuz dokunduğu hayvanı bir üst seviyeye taşır!');checkAch()}
+  if(cur.uni&&!uniSeen){uniSeen=true;store.set('uni','1');toast('Tek boynuz dokunduğu hayvanı bir üst seviyeye taşır!','unicorn');checkAch()}
   if(!tutDone){tutDone=true;store.set('tut','1');placeTut()}
   queued=next;next=pick();cur=null;loadT=.32;updHud(true);
 }
@@ -1439,7 +1466,8 @@ function drawRibbon(g,it,pts,wid,t){
   g.globalAlpha=1}
 function heart(x,y,s){heartG(ctx,x,y,s)}
 function drawBody(b){
-  const t=b.uni?uniTok:tokens[b.lv];
+  const ph=(time+b.id*1.37)%(3.4+(b.id%5)*.55),shut=ph<.13||b.sq>.55;
+  const t=shut?(b.uni?uniBlink:blinkTok[b.lv])||(b.uni?uniTok:tokens[b.lv]):(b.uni?uniTok:tokens[b.lv]);
   ctx.fillStyle='rgba(25,45,12,.25)';ctx.beginPath();ctx.ellipse(b.x+b.r*.1,b.y+b.r*.24,b.r*.95,b.r*.78,0,0,7);ctx.fill();
   const ps=.35+.65*easeBack(b.pop),br=1+Math.sin(time*2.2+b.id)*.014;
   ctx.save();ctx.translate(b.x,b.y);
@@ -1534,12 +1562,12 @@ let shownScore=0;
 function updHud(newNext){
   const s=$('score');if(score!==shownScore&&shownScore>=0){s.classList.remove('bump');void s.offsetWidth;s.classList.add('bump')}shownScore=score;
   s.textContent=fmt(score);$('best').textContent=fmt(Math.max(best,score));
-  if(next){const l=next.uni?UNI:LV[next.lv],n=$('next');n.firstChild&&n.firstChild.nodeType===3?n.firstChild.nodeValue=l.e:n.insertBefore(document.createTextNode(l.e),n.firstChild);n.style.background=l.c;
+  if(next){const l=next.uni?UNI:LV[next.lv],n=$('next');let im=n.querySelector('.aimg');if(!im){n.textContent='';n.insertAdjacentHTML('afterbegin',aimg(l.k,'nx'));im=n.querySelector('.aimg')}im.src=castSrc(l.k);n.style.background='';
     if(newNext){n.classList.remove('in');void n.offsetWidth;n.classList.add('in')}}
 }
 function renderStrip(){
   $('strip').innerHTML=LV.map((l,i)=>disc.has(i)
-    ?`<div class="slot on${i===freshSlot?' fresh':''}"><i>${l.e}</i><span>${l.v}</span></div>`
+    ?`<div class="slot on${i===freshSlot?' fresh':''}"><i>${aimg(l.k)}</i><span>${l.v}</span></div>`
     :`<div class="slot off"><i>?</i><span>${l.v}</span></div>`).join('');
 }
 let bookTab='animals';
@@ -1550,15 +1578,15 @@ function renderBook(){
     g.className='grid';
     const all=[...LV.map((l,i)=>({l,has:disc.has(i),hide:i>=TOP-1,val:l.v})),{l:UNI,has:uniSeen,hide:false,val:'özel'}];
     g.innerHTML=all.map(o=>o.has
-      ?`<div class="card"><i style="background:${o.l.c}">${o.l.e}</i><b>${o.l.n}</b><span>${o.val}</span></div>`
-      :`<div class="card lock"><i>${o.hide?'<b style="font-size:30px;color:#B59A6B">?</b>':`<em>${o.l.e}</em>`}</i><b>???</b><span>${o.val}</span></div>`).join('');
+      ?`<div class="card"><i>${aimg(o.l.k,"lg")}</i><b>${o.l.n}</b><span>${o.val}</span></div>`
+      :`<div class="card lock"><i>${o.hide?'<b style="font-size:30px;color:#B59A6B">?</b>':aimg(o.l.k,'lg sil')}</i><b>???</b><span>${o.val}</span></div>`).join('');
     const n=disc.size+(uniSeen?1:0);
     $('bookSub').textContent=n>=12?'Defter tamam. Gerçek bir efsanesin!':`${n}/12 hayvan bulundu. Gölgelere bakıp tahmin et.`;
   }else{
     g.className='';
     const got=ACH.filter(a=>P.ach[a.id]).length;
     $('bookSub').textContent=`${got}/${ACH.length} başarım açıldı.`;
-    const st=stat();g.innerHTML=ACH.map(a=>`<div class="ach${P.ach[a.id]?'':' lock'}"><i>${a.i}</i><div><b>${a.t}</b><span>${a.d}${!P.ach[a.id]&&!a.le&&a.g>1&&a.k!=='madeMax'?` (${fmt(Math.min(st[a.k]||0,a.g))}/${fmt(a.g)})`:''}</span></div><em>${P.ach[a.id]?'✓':'+'+a.r+' 🥚'}</em></div>`).join('');
+    const st=stat();g.innerHTML=ACH.map(a=>`<div class="ach${P.ach[a.id]?'':' lock'}"><i>${a.i}</i><div><b>${a.t}</b><span>${a.d}${!P.ach[a.id]&&!a.le&&a.g>1&&a.k!=='madeMax'?` (${fmt(Math.min(st[a.k]||0,a.g))}/${fmt(a.g)})`:''}</span></div><em>${P.ach[a.id]?'✓':'+'+a.r+' '+EGG}</em></div>`).join('');
   }
 }
 document.querySelectorAll('#bookTabs button').forEach(b=>b.onclick=()=>{bookTab=b.dataset.t;sfx.click();renderBook()});
@@ -1603,7 +1631,7 @@ function renderShop(){
   refreshEggs();
   const fe=$('freeEggs'),wait=P.premium?P.freeAt-Date.now():0;
   if(wait>0){const m=Math.ceil(wait/60000);fe.textContent=`Sonraki bedava yumurta: ${m>=60?Math.floor(m/60)+' sa '+(m%60)+' dk':m+' dk'}`;fe.disabled=true;fe.style.opacity=.6}
-  else{fe.textContent=P.premium?'Bedava +25 🥚 👑':'Reklam izle: +25 🥚';fe.disabled=false;fe.style.opacity=1}
+  else{fe.innerHTML=P.premium?'Bedava +25 '+EGG+' 👑':'Reklam izle: +25 '+EGG;fe.disabled=false;fe.style.opacity=1}
   const box=$('items');
   if(shopTab==='prem'){
     box.className='';
@@ -1611,7 +1639,7 @@ function renderShop(){
       <li>Ödüllü avantajlar reklamsız: ikinci şans, 2 kat yumurta ve yarım saatte bir bedava yumurta</li>
       <li>Her oyunda %50 fazla yumurta</li>
       <li>Altın başak teması, altın sapan ve altın iz</li>
-      <li>Hemen 300 🥚 hediye</li></ul>
+      <li>Hemen 300 ${EGG} hediye</li></ul>
       ${P.premium?'<div class="owned">Çiftlik Sahibisin, teşekkürler!</div>':`<button class="btn red" id="buyPrem">Sahip ol: ${CONFIG.premiumPrice}</button>`}
       <p class="sub" style="text-align:center;margin-top:8px">Tek seferlik ödeme. Oyunu kazanmak için satın almak gerekmez; her şey oynayarak da kazanılır.</p></div>
       <button class="link" id="tipBtn">Geliştiriciye bir çay ısmarla ☕</button>`;
@@ -1628,7 +1656,7 @@ function renderShop(){
       lk==='prem'?`<button class="price lock" data-buy="${id}">👑 Sahip</button>`:
       lk==='ach'?`<button class="price lock" data-buy="${id}">🏅 ${ach.t}</button>`:
       lk==='lvl'?`<button class="price lock" data-buy="${id}">🔒 Seviye ${it.lvl}</button>`:
-      `<button class="price" data-buy="${id}">${deal?`<s>${it.price}</s> `:''}${pr} 🥚</button>`;
+      `<button class="price" data-buy="${id}">${deal?`<s>${it.price}</s> `:''}${pr} ${EGG}</button>`;
     const tag=deal?'<em class="tag">Günün fırsatı</em>':it.ach&&!own?'<em class="tag ach">Başarım ödülü</em>':'';
     return `<div class="item${eq?' eq':''}${lk?' locked':''}">${tag}${pvHTML(shopTab,id,it)}<b>${it.n}</b>${btn}</div>`}).join('');
   box.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(shopTab,b.dataset.buy));
@@ -1646,7 +1674,7 @@ function buy(kind,id){
   else sfx.click();
   P.eq[kind]=id;save();
   TH=THEMES[P.eq.theme];SK=SLINGS[P.eq.sling];TR=TRAILS[P.eq.trail];
-  if(kind==='theme'){resize(true);initAmb()}
+  if(kind==='theme'){resize(true);initAmb();loadPen()}
   renderShop();
 }
 document.querySelectorAll('#shopTabs button').forEach(b=>b.onclick=()=>{shopTab=b.dataset.t;sfx.click();renderShop()});
@@ -1657,13 +1685,13 @@ function renderQuests(){
   const cd=canDaily(),cont=P.streak.last===YEST||P.streak.last===TODAY;
   const cur=cd?(cont?P.streak.day%7+1:1):P.streak.day;
   $('streak').innerHTML=DAILY.map((r,i)=>{const d=i+1,got=d<cur||(!cd&&d===cur),now=cd&&d===cur;
-    return `<div class="day${got?' got':''}${now?' now':''}">${d}. gün<b>${d===7?'🎁':r}</b>${d===7?r:'🥚'}</div>`}).join('');
+    return `<div class="day${got?' got':''}${now?' now':''}">${d}. gün<b>${d===7?'🎁':r}</b>${d===7?r:EGG}</div>`}).join('');
   const cb=$('claimDaily');const amt=DAILY[cur-1]*(P.premium?2:1);
-  cb.textContent=cd?`Ödülü al: ${amt} 🥚`:'Yarın yine gel!';cb.disabled=!cd;cb.style.opacity=cd?1:.55;
+  cb.innerHTML=cd?`Ödülü al: ${amt} ${EGG}`:'Yarın yine gel!';cb.disabled=!cd;cb.style.opacity=cd?1:.55;
   cb.onclick=()=>{if(!canDaily())return;P.streak={last:TODAY,day:cur};P.stats.streakMax=Math.max(P.stats.streakMax||0,cur);save();
     addEggs(amt,cur===7?'🎁 7. gün sandığı':'Günlük ödül');vib(20);checkAch();renderQuests();badge()};
   $('qlist').innerHTML=P.quests.list.map((q,i)=>{const d=QPOOL.find(x=>x.id===q.id);
-    const btn=q.cl?'<button class="price own">✓</button>':q.done?`<button class="price" data-q="${i}">Al +${d.r}</button>`:`<button class="price lock">+${d.r} 🥚</button>`;
+    const btn=q.cl?'<button class="price own">✓</button>':q.done?`<button class="price" data-q="${i}">Al +${d.r}</button>`:`<button class="price lock">+${d.r} ${EGG}</button>`;
     return `<div class="quest${q.cl?' done':''}"><div class="qt"><b>${d.t}</b><small>${fmt(q.prog)}/${fmt(d.goal)}</small><div class="bar"><i style="width:${Math.min(100,q.prog/d.goal*100)}%"></i></div></div>${btn}</div>`}).join('');
   $('qlist').querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{const q=P.quests.list[+b.dataset.q],d=QPOOL.find(x=>x.id===q.id);
     q.cl=true;save();addEggs(d.r,'Görev ödülü');
@@ -1672,9 +1700,9 @@ function renderQuests(){
 }
 
 const tq=[];let tBusy=false;
-function toast(m){if(tq.includes(m))return;tq.push(m);if(!tBusy)nextToast()}
+function toast(m,k){if(tq.some(x=>x.m===m))return;tq.push({m,k});if(!tBusy)nextToast()}
 function nextToast(){const t=$('toast'),m=tq.shift();if(!m){tBusy=false;t.classList.remove('show');return}
-  tBusy=true;t.textContent=m;t.classList.remove('show');
+  tBusy=true;t.innerHTML=(m.k?aimg(m.k,'ticon'):'')+escH(m.m).replace(/🥚/g,EGG);t.classList.remove('show');
   t.classList.toggle('low',[...document.querySelectorAll('section.screen')].some(x=>!x.hidden&&x.id!=='splash'));void t.offsetWidth;t.classList.add('show');setTimeout(nextToast,tq.length?1700:2500)}
 function placeTut(){
   const t=$('tut'),on=state==='play'&&!tutDone;t.hidden=!on;if(!on)return;
@@ -1746,7 +1774,7 @@ function setProg(p){
   prog=p;const w=$('walker'),pos=walkerAt(Math.min(.985,p*.985));if(!pos)return;
   w.style.left=pos.x+'px';w.style.top=pos.y+'px';
   const st=Math.min(WALK.length-1,Math.floor(p*WALK.length));
-  if(st!==wStage){const first=wStage<0;wStage=st;w.style.setProperty('--ws',(28+st*4)+'px');w.querySelector('.em').textContent=LV[WALK[st]].e;
+  if(st!==wStage){const first=wStage<0;wStage=st;w.style.setProperty('--ws',(28+st*4)+'px');w.querySelector('.em').innerHTML=aimg(LV[WALK[st]].k,'walk3d');
     if(!first){w.classList.remove('evolve');void w.offsetWidth;w.classList.add('evolve')}
     if(!ready)$('status').textContent=WLINE[st]}
   if(p-lastStep>.035&&p<.97){lastStep=p;const f=document.createElement('i');f.style.left=(pos.x-3)+'px';f.style.top=(pos.y+2)+'px';$('steps').appendChild(f);setTimeout(()=>f.remove(),2700)}
@@ -1764,8 +1792,9 @@ function splashTick(){
 requestAnimationFrame(splashTick);
 async function boot(){
   const fontP=document.fonts&&document.fonts.load?Promise.race([document.fonts.load('800 20px "Baloo 2"'),new Promise(r=>setTimeout(r,2500))]):Promise.resolve();
-  await fontP.catch(()=>{});target=.55;
-  await new Promise(r=>setTimeout(r,60));
+  await fontP.catch(()=>{});target=.35;
+  // the walking animal on the splash now reflects real loading: characters, then the pen
+  await loadCast();target=.7;await loadPen();
   resize(true);target=1;
 }
 $('splash').addEventListener('click',()=>{

@@ -1,0 +1,22 @@
+<!doctype html><html><body style="margin:0;background:transparent">
+<script type="module">
+import * as THREE from './node_modules/three/build/three.module.js';
+import { TOKEN, TOKEN_LIGHT as L } from './style.js';
+import { CAST } from './animals.js';
+const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+r.setClearColor(0, 0); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace; r.toneMappingExposure = L.exposure;
+r.setSize(TOKEN.px, TOKEN.px, false); document.body.appendChild(r.domElement);
+function shoot(obj) {
+  const s = new THREE.Scene(); s.add(new THREE.HemisphereLight(L.sky, L.ground, L.hemiI));
+  const key = new THREE.DirectionalLight(L.key, L.keyI); key.position.set(...L.keyDir).normalize().multiplyScalar(10); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 4; key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02;
+  Object.assign(key.shadow.camera, { left: -2.5, right: 2.5, top: 2.5, bottom: -2.5, near: 1, far: 30 }); s.add(key);
+  const fill = new THREE.DirectionalLight(L.fill, L.fillI); fill.position.set(...L.fillDir).normalize().multiplyScalar(10); s.add(fill);
+  const rim = new THREE.DirectionalLight(L.rim, L.rimI); rim.position.set(...L.rimDir).normalize().multiplyScalar(10); s.add(rim);
+  s.add(obj);
+  const p = TOKEN.pitch * Math.PI / 180, f = TOKEN.frame, cam = new THREE.OrthographicCamera(-f, f, f, -f, 0.1, 50);
+  cam.position.set(0, Math.sin(p) * 20, Math.cos(p) * 20); cam.lookAt(0, 0, 0); r.render(s, cam); return r.domElement.toDataURL('image/png');
+}
+const out = {};
+for (const k in CAST) { out[k] = shoot(CAST[k](false)); out[k + '-sleep'] = shoot(CAST[k](true)); }
+window.__out = out;
+</script></body></html>
