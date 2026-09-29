@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1024px;height:500px;overflow:hidden;position:relative;font-family:'Baloo 2',ui-rounded,system-ui,sans-serif;background:linear-gradient(#8FD0EE,#E4F5FB 70%)}
+.sun{position:absolute;left:70px;top:46px;width:86px;height:86px;border-radius:50%;background:#FFE27A;box-shadow:0 0 0 18px rgba(255,255,255,.2),0 0 0 38px rgba(255,255,255,.1)}
+.cloud{position:absolute;width:150px;height:44px;border-radius:30px;background:rgba(255,255,255,.9)}.cloud::before{content:"";position:absolute;left:30px;top:-24px;width:70px;height:60px;border-radius:50%;background:inherit}
+svg.hills{position:absolute;left:0;bottom:0;width:1024px;height:300px}
+.art{position:absolute}
+.sign{position:absolute;left:50%;top:40px;transform:translateX(-50%) rotate(-2deg);padding:16px 40px 20px;border-radius:26px;border:5px solid #5E3818;
+ background:repeating-linear-gradient(0deg,rgba(60,30,10,.09) 0 2px,transparent 2px 8px),linear-gradient(#C48A52,#9A6435);box-shadow:0 8px 0 #3F240E}
+.sign h1{font-size:70px;line-height:.86;color:#FFF6E0;text-shadow:0 5px 0 #3F240E;text-align:center;font-weight:800;letter-spacing:.5px}
+.tag{position:absolute;left:50%;top:238px;transform:translateX(-50%);background:#C8453A;color:#fff;font-weight:800;font-size:24px;padding:6px 22px 8px;border-radius:16px;box-shadow:0 5px 0 #8E2E26;white-space:nowrap}
+.pets{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;align-items:flex-end;gap:0}
+.pets img{filter:drop-shadow(0 6px 4px rgba(0,0,0,.18));margin:0 -9px}
+</style></head><body>
+<div class="sun"></div><div class="cloud" style="left:230px;top:70px"></div><div class="cloud" style="left:760px;top:44px;transform:scale(.8)"></div>
+<svg class="hills" viewBox="0 0 1024 300" preserveAspectRatio="none"><path d="M0 120 C200 60 420 80 620 110 S900 70 1024 90 V300 H0Z" fill="#5FA548"/><path d="M0 175 C240 135 520 150 760 170 S960 150 1024 150 V300 H0Z" fill="#7CC05F"/></svg>
+<img class="art" src="../img/tower-day.webp" style="left:30px;top:150px;width:210px">
+<img class="art" src="../img/blades-day.webp" style="left:14px;top:212px;width:86px;transform:rotate(12deg)">
+<img class="art" src="../img/house-day.webp" style="left:120px;top:205px;width:300px">
+<img class="art" src="../img/barn-day.webp" style="left:700px;top:170px;width:330px">
+<img class="art" src="../img/tree-day.webp" style="left:600px;top:190px;width:130px">
+<div class="sign"><h1>Sapan<br>Çiftliği</h1></div>
+<div class="tag">Fırlat, birleştir, büyüt!</div>
+<div class="pets">
+ <img src="../img/cast/chick.webp" style="width:68px"><img src="../img/cast/mouse.webp" style="width:77px"><img src="../img/cast/rabbit.webp" style="width:86px">
+ <img src="../img/cast/cat.webp" style="width:95px"><img src="../img/cast/dog.webp" style="width:104px"><img src="../img/cast/pig.webp" style="width:112px">
+ <img src="../img/cast/sheep.webp" style="width:121px"><img src="../img/cast/cow.webp" style="width:130px"><img src="../img/cast/elephant.webp" style="width:139px"><img src="../img/cast/whale.webp" style="width:148px">
+</div>
+</body></html>

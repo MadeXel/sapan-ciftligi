@@ -1,0 +1,3 @@
+# Şablon: pub-XXXXXXXXXXXXXXXX yerine AdMob yayıncı kimliğini yaz ve bu dosyayı
+# https://madexel.github.io/app-ads.txt adresinde yayınla (MadeXel/madexel.github.io reposunun kökü).
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
